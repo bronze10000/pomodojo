@@ -1,0 +1,24 @@
+{
+  "name": "Pomodojo",
+  "short_name": "Pomodojo",
+  "description": "Focus. Rest. Repeat.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0D0D0D",
+  "theme_color": "#E8553A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%230D0D0D'/><circle cx='256' cy='240' r='120' fill='none' stroke='%23E8553A' stroke-width='12'/><text x='256' y='260' text-anchor='middle' font-size='100' font-family='system-ui' font-weight='200' fill='white'>🥋</text><text x='256' y='420' text-anchor='middle' font-size='48' font-family='system-ui' font-weight='600' fill='%23E8553A'>道</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%230D0D0D'/><circle cx='256' cy='240' r='120' fill='none' stroke='%23E8553A' stroke-width='12'/><text x='256' y='260' text-anchor='middle' font-size='100' font-family='system-ui' font-weight='200' fill='white'>🥋</text><text x='256' y='420' text-anchor='middle' font-size='48' font-family='system-ui' font-weight='600' fill='%23E8553A'>道</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

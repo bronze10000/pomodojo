@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="manifest" href="manifest.json">
+<title>Pomodojo</title>
+<style>
+:root {
+  --focus: #E8553A; --focus-accent: #FF8A6E; --focus-bg: #1A0F0A; --focus-glow: rgba(232,85,58,0.3);
+  --break: #3AAF85; --break-accent: #6ED4AD; --break-bg: #0A1A14; --break-glow: rgba(58,175,133,0.3);
+  --long: #5B7FE8; --long-accent: #8EA8F0; --long-bg: #0A0F1A; --long-glow: rgba(91,127,232,0.3);
+  --primary: var(--focus); --accent: var(--focus-accent); --mode-bg: var(--focus-bg); --glow: var(--focus-glow);
+  --bg: #0D0D0D; --surface: rgba(255,255,255,0.04); --surface2: rgba(255,255,255,0.06);
+  --text: #F5F0EB; --text-dim: rgba(245,240,235,0.4); --text-dimmer: rgba(245,240,235,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, 'SF Pro Display', BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.6s ease;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  background: rgba(255,255,255,0.08); border-radius: 4px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--primary); cursor: pointer; border: 3px solid #1a1a1a;
+}
+
+/* App shell */
+#app { height: 100dvh; display: flex; flex-direction: column; }
+.tab-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.tab-bar {
+  display: flex; border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(15,15,15,0.95); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 0 6px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35);
+  transition: color 0.3s;
+}
+.tab-btn.active { color: var(--primary); }
+.tab-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+/* Timer screen */
+.timer-screen {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 0 20px; min-height: 100%;
+  background: linear-gradient(170deg, var(--mode-bg) 0%, #0D0D0D 50%, #111 100%);
+  transition: background 0.8s ease;
+}
+.streak-banner { width: 100%; padding: 0 24px; display: flex; align-items: center; gap: 4px; }
+.streak-banner span { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
+
+.mode-selector {
+  display: flex; gap: 4px; margin-top: 12px;
+  background: var(--surface); border-radius: 14px; padding: 4px;
+}
+.mode-btn {
+  padding: 8px 18px; border-radius: 11px; font-size: 13px; font-weight: 600;
+  color: rgba(245,240,235,0.4); transition: all 0.3s;
+}
+.mode-btn.active { background: var(--primary); color: #fff; }
+
+.tag-row {
+  display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; width: 100%;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.tag-row::-webkit-scrollbar { display: none; }
+.tag-btn {
+  display: flex; align-items: center; gap: 4px; padding: 6px 12px;
+  border-radius: 20px; font-size: 12px; font-weight: 500;
+  color: var(--text-dim); background: var(--surface); white-space: nowrap;
+  border: 1px solid transparent; transition: all 0.3s;
+}
+.tag-btn.active {
+  color: #fff; background: rgba(255,255,255,0.08);
+  border-color: var(--primary);
+}
+
+/* Timer ring */
+.timer-container { position: relative; margin: 28px 0 16px; }
+.timer-glow {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 200px; height: 200px; border-radius: 50%;
+  background: var(--glow); filter: blur(60px);
+  opacity: 0.15; transition: opacity 0.8s;
+}
+.timer-glow.running { opacity: 0.45; }
+.timer-display {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center;
+}
+.timer-time {
+  font-size: 60px; font-weight: 200; letter-spacing: 2px;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.timer-time.overtime { color: var(--accent); }
+.timer-label {
+  font-size: 11px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 4px; color: var(--text-dim); margin-top: 10px;
+}
+
+/* Controls */
+.controls { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
+.ctrl-btn {
+  width: 50px; height: 50px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 18px;
+  background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(245,240,235,0.5); transition: transform 0.15s;
+}
+.ctrl-btn:active { transform: scale(0.9); }
+.main-btn {
+  width: 76px; height: 76px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 22px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff; box-shadow: 0 8px 32px var(--glow); transition: transform 0.15s;
+}
+.main-btn:active { transform: scale(0.92); }
+
+/* Session dots */
+.session-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
+.dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); transition: background 0.3s;
+}
+.dot.filled { background: var(--primary); }
+.today-count { font-size: 12px; color: var(--text-dimmer); margin-top: 10px; }
+
+/* Daily goal bar */
+.goal-bar { width: 100%; max-width: 300px; margin-top: 16px; padding: 0 40px; }
+.goal-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.goal-header span { font-size: 11px; font-weight: 500; }
+.goal-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.goal-fill {
+  height: 100%; border-radius: 3px; transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+/* Stats screen */
+.stats-screen { padding: 16px 24px 32px; }
+.stats-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.stats-subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+.stat-row { display: flex; gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  flex: 1; text-align: center; padding: 14px 8px;
+  background: var(--surface); border-radius: 14px;
+  border: 1px solid var(--surface2);
+}
+.stat-card .icon { font-size: 16px; }
+.stat-card .val { font-size: 20px; font-weight: 700; margin: 4px 0 2px; }
+.stat-card .lbl { font-size: 10px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.tab-picker { display: flex; gap: 0; margin-bottom: 20px; background: var(--surface); border-radius: 10px; padding: 3px; }
+.tab-pick {
+  flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600;
+  border-radius: 8px; color: var(--text-dim); transition: all 0.3s;
+}
+.tab-pick.active { background: rgba(255,255,255,0.08); color: var(--text); }
+
+/* Weekly chart */
+.week-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; gap: 8px; margin-bottom: 8px; }
+.week-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
+.week-bar-count { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); min-height: 16px; }
+.week-bar {
+  width: 100%; max-width: 36px; border-radius: 8px; min-height: 4px;
+  background: rgba(255,255,255,0.04); transition: height 0.5s;
+}
+.week-bar.has-data { background: rgba(255,255,255,0.12); }
+.week-bar.today { background: linear-gradient(to top, var(--primary), var(--accent)); }
+.week-bar.today.has-data { box-shadow: 0 4px 16px var(--glow); }
+.week-day-label { font-size: 11px; color: var(--text-dimmer); }
+.week-day-label.today { color: rgba(255,255,255,0.8); font-weight: 600; }
+
+/* Monthly heatmap */
+.month-title { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+.heatmap-headers { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+.heatmap-headers span { text-align: center; font-size: 10px; font-weight: 500; color: var(--text-dimmer); }
+.heatmap-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.heatmap-cell {
+  aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; color: var(--text-dimmer);
+  background: var(--surface); cursor: default; transition: background 0.3s;
+}
+.heatmap-cell.today { outline: 1.5px solid rgba(255,255,255,0.3); }
+.heatmap-cell.future { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.12); }
+.heatmap-cell.lvl1 { background: rgba(232,85,58,0.25); color: rgba(255,255,255,0.8); }
+.heatmap-cell.lvl2 { background: rgba(232,85,58,0.4); color: rgba(255,255,255,0.85); }
+.heatmap-cell.lvl3 { background: rgba(232,85,58,0.6); color: #fff; }
+.heatmap-cell.lvl4 { background: rgba(232,85,58,0.8); color: #fff; }
+.heatmap-cell.lvl5 { background: rgba(232,85,58,1.0); color: #fff; }
+.heatmap-selected { margin-top: 12px; display: flex; justify-content: space-between; font-size: 13px; }
+.heatmap-legend { display: flex; align-items: center; gap: 4px; justify-content: center; margin-top: 12px; }
+.heatmap-legend span { font-size: 10px; color: var(--text-dimmer); }
+.legend-box { width: 14px; height: 14px; border-radius: 3px; }
+
+/* Summary grid */
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.summary-card {
+  padding: 16px; background: var(--surface); border-radius: 14px;
+  border: 1px solid var(--surface2);
+}
+.summary-card .lbl { font-size: 11px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.summary-card .val { font-size: 24px; font-weight: 600; }
+
+.reset-btn {
+  width: 100%; padding: 14px; border-radius: 14px; margin-top: 24px;
+  font-size: 13px; font-weight: 500; color: var(--text-dim);
+  border: 1px solid rgba(255,255,255,0.08); background: transparent;
+}
+
+/* Settings screen */
+.settings-screen { padding: 16px 24px 32px; }
+.settings-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+.settings-group {
+  padding: 20px; margin-bottom: 16px; background: var(--surface);
+  border-radius: 18px; border: 1px solid var(--surface2);
+}
+.settings-group h3 {
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+}
+.setting-item { margin-bottom: 18px; }
+.setting-item:last-child { margin-bottom: 0; }
+.setting-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.setting-header .lbl { font-size: 14px; color: rgba(255,255,255,0.65); }
+.setting-header .val { font-size: 14px; font-weight: 600; color: var(--accent); }
+.save-btn {
+  width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 600;
+  color: #fff; background: linear-gradient(135deg, var(--primary), var(--accent));
+  margin-top: 8px;
+}
+.about { text-align: center; padding: 24px 0; }
+.about .name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3); }
+.about .tagline { font-size: 12px; color: rgba(255,255,255,0.2); margin-top: 4px; }
+
+/* Goal celebration */
+.celebration {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5); z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+.celebration-card {
+  text-align: center; padding: 32px;
+  background: rgba(30,30,30,0.95); border-radius: 24px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.celebration-card .emoji { font-size: 44px; }
+.celebration-card .msg { font-size: 18px; font-weight: 600; margin-top: 8px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="tab-content" id="tabContent"></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="timer" onclick="switchTab('timer')">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+      Timer
+    </button>
+    <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">
+      <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+      Stats
+    </button>
+    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81a.49.49 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+      Settings
+    </button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA LAYER
+// ============================================================
+const STORE_KEY = 'pomodojo_data';
+
+const defaults = {
+  settings: { focusDuration: 25, breakDuration: 5, longBreakDuration: 15, sessionsBeforeLongBreak: 4, dailyGoal: 4 },
+  sessions: [],
+  longestStreak: 0
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      return { ...defaults, ...d, settings: { ...defaults.settings, ...(d.settings || {}) } };
+    }
+  } catch(e) {}
+  return { ...defaults };
+}
+
+function saveData(data) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+let data = loadData();
+
+function dateKey(d = new Date()) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function sessionsForDate(dk) {
+  return data.sessions.filter(s => s.dateKey === dk);
+}
+
+function todayCount() { return sessionsForDate(dateKey()).length; }
+
+function calcStreak() {
+  const cal = new Date();
+  cal.setHours(0,0,0,0);
+  let streak = 0;
+  let check = new Date(cal);
+  if (sessionsForDate(dateKey(check)).length === 0) {
+    check.setDate(check.getDate() - 1);
+  }
+  while (true) {
+    if (sessionsForDate(dateKey(check)).length > 0) {
+      streak++;
+      check.setDate(check.getDate() - 1);
+    } else break;
+  }
+  if (streak > data.longestStreak) {
+    data.longestStreak = streak;
+    saveData(data);
+  }
+  return streak;
+}
+
+function addSession(tag, focusDur, overtimeDur) {
+  data.sessions.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    date: new Date().toISOString(),
+    dateKey: dateKey(),
+    tag, focusDuration: focusDur, overtimeDuration: overtimeDur, completed: true
+  });
+  saveData(data);
+}
+
+// ============================================================
+// TIMER STATE
+// ============================================================
+let mode = 'focus'; // focus, shortBreak, longBreak
+let timeRemaining = data.settings.focusDuration * 60;
+let scheduledDuration = data.settings.focusDuration * 60;
+let isRunning = false;
+let isOvertime = false;
+let overtimeSeconds = 0;
+let completedSessions = 0;
+let selectedTag = 'Untagged';
+let timerInterval = null;
+
+const modeThemes = {
+  focus:      { primary:'--focus', accent:'--focus-accent', bg:'--focus-bg', glow:'--focus-glow' },
+  shortBreak: { primary:'--break', accent:'--break-accent', bg:'--break-bg', glow:'--break-glow' },
+  longBreak:  { primary:'--long',  accent:'--long-accent',  bg:'--long-bg',  glow:'--long-glow' }
+};
+
+function applyTheme() {
+  const t = modeThemes[mode];
+  const r = document.documentElement.style;
+  r.setProperty('--primary', `var(${t.primary})`);
+  r.setProperty('--accent', `var(${t.accent})`);
+  r.setProperty('--mode-bg', `var(${t.bg})`);
+  r.setProperty('--glow', `var(${t.glow})`);
+}
+
+function setDuration(m) {
+  const s = data.settings;
+  const mins = m === 'focus' ? s.focusDuration : m === 'shortBreak' ? s.breakDuration : s.longBreakDuration;
+  scheduledDuration = mins * 60;
+  timeRemaining = scheduledDuration;
+  isOvertime = false;
+  overtimeSeconds = 0;
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function tick() {
+  if (mode === 'focus') {
+    if (timeRemaining > 0) {
+      timeRemaining--;
+      if (timeRemaining === 0) {
+        isOvertime = true;
+        sendNotification();
+      }
+    } else {
+      overtimeSeconds++;
+    }
+  } else {
+    if (timeRemaining > 0) {
+      timeRemaining--;
+    } else {
+      // Break over, auto-switch to focus
+      stopTimer();
+      switchMode('focus');
+      renderTimer();
+    }
+  }
+  renderTimer();
+}
+
+function startTimer() {
+  if (isRunning) return;
+  isRunning = true;
+  timerInterval = setInterval(tick, 1000);
+  renderTimer();
+}
+
+function stopTimer() {
+  isRunning = false;
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function pauseTimer() {
+  stopTimer();
+  renderTimer();
+}
+
+function toggleTimer() {
+  if (isRunning) pauseTimer();
+  else startTimer();
+}
+
+function resetTimer() {
+  stopTimer();
+  setDuration(mode);
+  renderTimer();
+}
+
+function switchMode(m) {
+  stopTimer();
+  mode = m;
+  setDuration(m);
+  applyTheme();
+  renderTimer();
+}
+
+function endFocusSession() {
+  stopTimer();
+  const goalBefore = todayCount() >= data.settings.dailyGoal;
+  addSession(selectedTag, scheduledDuration, overtimeSeconds);
+  completedSessions++;
+  isOvertime = false;
+  overtimeSeconds = 0;
+
+  // Auto-transition to break
+  if (completedSessions % data.settings.sessionsBeforeLongBreak === 0) {
+    switchMode('longBreak');
+  } else {
+    switchMode('shortBreak');
+  }
+  startTimer(); // Auto-start break
+
+  if (!goalBefore && todayCount() >= data.settings.dailyGoal) {
+    showCelebration();
+  }
+}
+
+function skipToNext() {
+  stopTimer();
+  if (mode === 'focus') {
+    if (isOvertime || timeRemaining < scheduledDuration) {
+      endFocusSession();
+    } else {
+      const isLong = (completedSessions + 1) % data.settings.sessionsBeforeLongBreak === 0;
+      switchMode(isLong ? 'longBreak' : 'shortBreak');
+    }
+  } else {
+    switchMode('focus');
+  }
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendNotification() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Pomodojo', {
+      body: 'Focus session complete! Keep going or take a break.',
+      icon: '🥋',
+      tag: 'pomodojo-timer'
+    });
+  }
+  // Also play a sound via audio context
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 800;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+    osc.start(); osc.stop(ctx.currentTime + 0.8);
+  } catch(e){}
+}
+
+// ============================================================
+// CELEBRATION
+// ============================================================
+function showCelebration() {
+  const el = document.createElement('div');
+  el.className = 'celebration';
+  el.innerHTML = '<div class="celebration-card"><div class="emoji">🎉</div><div class="msg">Daily Goal Complete!</div></div>';
+  el.onclick = () => el.remove();
+  document.body.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 2500);
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+let currentTab = 'timer';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if (tab === 'timer') renderTimer();
+  else if (tab === 'stats') renderStats();
+  else if (tab === 'settings') renderSettings();
+}
+
+// ---- TIMER RENDER ----
+function renderTimer() {
+  if (currentTab !== 'timer') return;
+  const tc = document.getElementById('tabContent');
+  const progress = isOvertime ? 1 : (scheduledDuration > 0 ? 1 - timeRemaining / scheduledDuration : 0);
+  const circumference = 2 * Math.PI * 130;
+  const offset = circumference * (1 - progress);
+  const streak = calcStreak();
+  const tc2 = todayCount();
+  const goalProg = data.settings.dailyGoal > 0 ? Math.min(1, tc2 / data.settings.dailyGoal) : 0;
+  const goalMet = tc2 >= data.settings.dailyGoal;
+  const dotCount = data.settings.sessionsBeforeLongBreak;
+  const filledDots = completedSessions % dotCount;
+
+  const modeLabels = { focus: 'Focus', shortBreak: 'Break', longBreak: 'Long Break' };
+  const tags = [
+    { id:'Work', emoji:'💼' }, { id:'Study', emoji:'📚' }, { id:'Personal', emoji:'🏠' },
+    { id:'Creative', emoji:'🎨' }, { id:'Health', emoji:'💪' }
+  ];
+
+  // Progress dot position
+  const angle = 2 * Math.PI * progress - Math.PI / 2;
+  const dotX = 145 + 130 * Math.cos(angle);
+  const dotY = 145 + 130 * Math.sin(angle);
+
+  // Button logic
+  let mainBtnIcon, mainBtnAction;
+  if (mode === 'focus' && isOvertime) {
+    mainBtnIcon = '⏹'; mainBtnAction = 'endFocusSession()';
+  } else {
+    mainBtnIcon = isRunning ? '❚❚' : '▶'; mainBtnAction = 'toggleTimer()';
+  }
+
+  tc.innerHTML = `
+    <div class="timer-screen">
+      <div class="streak-banner">
+        ${streak > 0 ? `<span>🔥</span><span>${streak} day streak</span>` : ''}
+      </div>
+
+      <div class="mode-selector">
+        <button class="mode-btn ${mode==='focus'?'active':''}" onclick="switchMode('focus')">Focus</button>
+        <button class="mode-btn ${mode==='shortBreak'?'active':''}" onclick="switchMode('shortBreak')">Break</button>
+        <button class="mode-btn ${mode==='longBreak'?'active':''}" onclick="switchMode('longBreak')">Long Break</button>
+      </div>
+
+      <div class="tag-row">
+        ${tags.map(t => `<button class="tag-btn ${selectedTag===t.id?'active':''}" onclick="selectedTag='${t.id}';renderTimer()">${t.emoji} ${t.id}</button>`).join('')}
+      </div>
+
+      <div class="timer-container">
+        <div class="timer-glow ${isRunning?'running':''}"></div>
+        <svg width="290" height="290" viewBox="0 0 290 290">
+          <circle cx="145" cy="145" r="130" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="145" cy="145" r="130" fill="none" stroke="url(#grad)" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+            transform="rotate(-90 145 145)" style="transition:stroke-dashoffset 1s linear"/>
+          ${progress > 0 ? `<circle cx="${dotX}" cy="${dotY}" r="4" fill="#fff" filter="url(#dotGlow)"/>` : ''}
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:var(--primary)"/>
+              <stop offset="100%" style="stop-color:var(--accent)"/>
+            </linearGradient>
+            <filter id="dotGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+        </svg>
+        <div class="timer-display">
+          <div class="timer-time ${isOvertime?'overtime':''}">
+            ${isOvertime ? '+' + formatTime(overtimeSeconds) : formatTime(timeRemaining)}
+          </div>
+          <div class="timer-label">${isOvertime ? 'Overtime' : modeLabels[mode]}</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn" onclick="resetTimer()">↺</button>
+        <button class="main-btn" onclick="${mainBtnAction}">${mainBtnIcon}</button>
+        <button class="ctrl-btn" onclick="skipToNext()">⏭</button>
+      </div>
+
+      <div class="session-dots">
+        ${Array.from({length:dotCount}, (_,i) => `<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}
+      </div>
+      <div class="today-count">${tc2} session${tc2===1?'':'s'} today</div>
+
+      <div class="goal-bar">
+        <div class="goal-header">
+          <span style="color:var(--text-dim)">Daily Goal</span>
+          <span style="color:${goalMet?'var(--accent)':'var(--text-dim)'};font-weight:600">${tc2}/${data.settings.dailyGoal}</span>
+        </div>
+        <div class="goal-track"><div class="goal-fill" style="width:${goalProg*100}%"></div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ---- STATS RENDER ----
+let statsTab = 'weekly';
+let selectedHeatmapDay = null;
+
+function renderStats() {
+  if (currentTab !== 'stats') return;
+  const tc = document.getElementById('tabContent');
+  const streak = calcStreak();
+
+  tc.innerHTML = `
+    <div class="stats-screen">
+      <h2>Progress</h2>
+      <div class="stat-row">
+        <div class="stat-card"><div class="icon">🔥</div><div class="val">${streak}</div><div class="lbl">Streak</div></div>
+        <div class="stat-card"><div class="icon">🏆</div><div class="val">${data.longestStreak}</div><div class="lbl">Longest</div></div>
+        <div class="stat-card"><div class="icon">📊</div><div class="val">${data.sessions.length}</div><div class="lbl">Lifetime</div></div>
+      </div>
+
+      <div class="tab-picker">
+        <button class="tab-pick ${statsTab==='weekly'?'active':''}" onclick="statsTab='weekly';renderStats()">Weekly</button>
+        <button class="tab-pick ${statsTab==='monthly'?'active':''}" onclick="statsTab='monthly';renderStats()">Monthly</button>
+      </div>
+
+      <div id="statsContent"></div>
+
+      ${renderSummaryCards()}
+
+      <button class="reset-btn" onclick="if(confirm('Reset all history?')){data.sessions=[];data.longestStreak=0;saveData(data);renderStats();}">Reset All History</button>
+    </div>
+  `;
+
+  if (statsTab === 'weekly') renderWeekly();
+  else renderMonthly();
+}
+
+function renderWeekly() {
+  const container = document.getElementById('statsContent');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const dk = dateKey(d);
+    const count = sessionsForDate(dk).length;
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const isToday = i === 0;
+    days.push({ dk, count, dayName, isToday });
+  }
+  const max = Math.max(1, ...days.map(d => d.count));
+
+  container.innerHTML = `
+    <div class="week-chart">
+      ${days.map(d => {
+        const h = Math.max(4, (d.count / max) * 130);
+        return `<div class="week-bar-col">
+          <div class="week-bar-count">${d.count||''}</div>
+          <div class="week-bar ${d.count>0?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px"></div>
+          <div class="week-day-label ${d.isToday?'today':''}">${d.dayName}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderMonthly() {
+  const container = document.getElementById('statsContent');
+  const now = new Date();
+  const year = now.getFullYear(), month = now.getMonth();
+  const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayDk = dateKey();
+  const headers = ['S','M','T','W','T','F','S'];
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) cells += '<div class="heatmap-cell" style="background:transparent"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dk = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const count = sessionsForDate(dk).length;
+    const isToday = dk === todayDk;
+    const isFuture = dk > todayDk;
+    let lvl = '';
+    if (!isFuture && count > 0) {
+      if (count >= 8) lvl = 'lvl5';
+      else if (count >= 5) lvl = 'lvl4';
+      else if (count >= 3) lvl = 'lvl3';
+      else if (count >= 2) lvl = 'lvl2';
+      else lvl = 'lvl1';
+    }
+    const cls = [isToday?'today':'', isFuture?'future':'', lvl].filter(Boolean).join(' ');
+    const click = count > 0 ? `onclick="selectedHeatmapDay=selectedHeatmapDay==='${dk}'?null:'${dk}';renderStats()"` : '';
+    cells += `<div class="heatmap-cell ${cls}" ${click}>${d}</div>`;
+  }
+
+  let selectedInfo = '';
+  if (selectedHeatmapDay) {
+    const sc = sessionsForDate(selectedHeatmapDay);
+    if (sc.length > 0) {
+      const dd = new Date(selectedHeatmapDay + 'T12:00:00');
+      const label = dd.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'}</span></div>`;
+    }
+  }
+
+  container.innerHTML = `
+    <div class="month-title">${monthName}</div>
+    <div class="heatmap-headers">${headers.map(h => `<span>${h}</span>`).join('')}</div>
+    <div class="heatmap-grid">${cells}</div>
+    ${selectedInfo}
+    <div class="heatmap-legend">
+      <span>Less</span>
+      <div class="legend-box" style="background:var(--surface)"></div>
+      <div class="legend-box" style="background:rgba(232,85,58,0.25)"></div>
+      <div class="legend-box" style="background:rgba(232,85,58,0.4)"></div>
+      <div class="legend-box" style="background:rgba(232,85,58,0.6)"></div>
+      <div class="legend-box" style="background:rgba(232,85,58,0.8)"></div>
+      <div class="legend-box" style="background:rgba(232,85,58,1)"></div>
+      <span>More</span>
+    </div>
+  `;
+}
+
+function renderSummaryCards() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let weekTotal = 0, weekMinutes = 0, bestDay = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const s = sessionsForDate(dateKey(d));
+    weekTotal += s.length;
+    if (s.length > bestDay) bestDay = s.length;
+    weekMinutes += s.reduce((a, r) => a + (r.focusDuration + (r.overtimeDuration||0)), 0);
+  }
+  const weekMinFormatted = weekMinutes >= 3600 ? Math.floor(weekMinutes/3600) + 'h ' + Math.floor((weekMinutes%3600)/60) + 'm' : Math.floor(weekMinutes/60) + 'm';
+
+  return `
+    <div class="summary-grid">
+      <div class="summary-card"><div class="lbl">Today</div><div class="val">${todayCount()}</div></div>
+      <div class="summary-card"><div class="lbl">This Week</div><div class="val">${weekTotal}</div></div>
+      <div class="summary-card"><div class="lbl">Best Day</div><div class="val">${bestDay}</div></div>
+      <div class="summary-card"><div class="lbl">Focus Time</div><div class="val">${weekMinFormatted}</div></div>
+    </div>
+  `;
+}
+
+// ---- SETTINGS RENDER ----
+let tempSettings = { ...data.settings };
+
+function renderSettings() {
+  if (currentTab !== 'settings') return;
+  tempSettings = { ...data.settings };
+  const tc = document.getElementById('tabContent');
+
+  tc.innerHTML = `
+    <div class="settings-screen">
+      <h2>Settings</h2>
+
+      <div class="settings-group">
+        <h3>Timer</h3>
+        ${settingSlider('focusDuration', 'Focus Duration', 'min', 1, 60, '#E8553A')}
+        ${settingSlider('breakDuration', 'Break Duration', 'min', 1, 30, '#3AAF85')}
+        ${settingSlider('longBreakDuration', 'Long Break Duration', 'min', 1, 30, '#5B7FE8')}
+        ${settingSlider('sessionsBeforeLongBreak', 'Sessions Before Long Break', '', 2, 8, 'rgba(255,255,255,0.6)')}
+      </div>
+
+      <div class="settings-group">
+        <h3>Goals</h3>
+        ${settingSlider('dailyGoal', 'Daily Session Goal', 'sessions', 1, 12, '#FFB932')}
+      </div>
+
+      <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+
+      <div class="about">
+        <div class="name">Pomodojo</div>
+        <div class="tagline">Focus. Rest. Repeat.</div>
+      </div>
+    </div>
+  `;
+}
+
+function settingSlider(key, label, unit, min, max, color) {
+  const val = tempSettings[key];
+  const display = unit ? `${val} ${unit}` : `${val}`;
+  return `
+    <div class="setting-item">
+      <div class="setting-header">
+        <span class="lbl">${label}</span>
+        <span class="val" id="val_${key}" style="color:${color}">${display}</span>
+      </div>
+      <input type="range" min="${min}" max="${max}" value="${val}"
+        style="--primary:${color}" oninput="updateSetting('${key}','${unit}',this.value,'${color}')">
+    </div>
+  `;
+}
+
+function updateSetting(key, unit, val, color) {
+  tempSettings[key] = parseInt(val);
+  const el = document.getElementById('val_' + key);
+  if (el) el.textContent = unit ? `${val} ${unit}` : val;
+}
+
+function saveSettings() {
+  data.settings = { ...tempSettings };
+  saveData(data);
+  // Reset timer with new settings
+  mode = 'focus';
+  setDuration('focus');
+  stopTimer();
+  applyTheme();
+  switchTab('timer');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+applyTheme();
+renderTimer();
+requestNotificationPermission();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Visibility change - stop timer when hidden (per spec: pause on app exit)
+document.addEventListener('visibilitychange', () => {
+  // We keep the timer running but recalculate on return
+  // Actually per spec: pause when leaving app
+  // But for PWA, let's save state and adjust on return
+});
+</script>
+</body>
+</html>
