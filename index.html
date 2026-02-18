@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Pomodojo</title>
 <style>
 :root {
@@ -54,7 +55,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Timer screen */
 .timer-screen {
   display: flex; flex-direction: column; align-items: center;
-  padding: 8px 0 20px; min-height: 100%;
+  padding: calc(env(safe-area-inset-top, 20px) + 12px) 0 20px; min-height: 100%;
   background: linear-gradient(170deg, var(--mode-bg) 0%, #0D0D0D 50%, #111 100%);
   transition: background 0.8s ease;
 }
@@ -76,6 +77,7 @@ input[type="range"]::-webkit-slider-thumb {
   scrollbar-width: none; -ms-overflow-style: none;
 }
 .tag-row::-webkit-scrollbar { display: none; }
+.tag-row::after { content: ''; min-width: 24px; flex-shrink: 0; }
 .tag-btn {
   display: flex; align-items: center; gap: 4px; padding: 6px 12px;
   border-radius: 20px; font-size: 12px; font-weight: 500;
@@ -147,7 +149,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* Stats screen */
-.stats-screen { padding: 16px 24px 32px; }
+.stats-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .stats-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
 .stats-subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
 .stat-row { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -219,7 +221,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* Settings screen */
-.settings-screen { padding: 16px 24px 32px; }
+.settings-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .settings-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
 .settings-group {
   padding: 20px; margin-bottom: 16px; background: var(--surface);
@@ -563,7 +565,7 @@ function renderTimer() {
   const modeLabels = { focus: 'Focus', shortBreak: 'Break', longBreak: 'Long Break' };
   const tags = [
     { id:'Work', emoji:'💼' }, { id:'Study', emoji:'📚' }, { id:'Personal', emoji:'🏠' },
-    { id:'Creative', emoji:'🎨' }, { id:'Health', emoji:'💪' }
+    { id:'Health', emoji:'💪' }
   ];
 
   // Progress dot position

@@ -1,8 +1,11 @@
-const CACHE_NAME = 'pomodojo-v1';
+const CACHE_NAME = 'pomodojo-v3';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './apple-touch-icon.png',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Install - cache assets
