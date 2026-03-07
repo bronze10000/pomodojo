@@ -35,8 +35,6 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
   background: var(--primary); cursor: pointer; border: 3px solid #1a1a1a;
 }
-
-/* App shell */
 #app { height: 100dvh; display: flex; flex-direction: column; }
 .tab-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
 .tab-bar {
@@ -61,7 +59,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .streak-banner { width: 100%; padding: 0 24px; display: flex; align-items: center; gap: 4px; }
 .streak-banner span { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
-
 .mode-selector {
   display: flex; gap: 4px; margin-top: 12px;
   background: var(--surface); border-radius: 14px; padding: 4px;
@@ -71,23 +68,6 @@ input[type="range"]::-webkit-slider-thumb {
   color: rgba(245,240,235,0.4); transition: all 0.3s;
 }
 .mode-btn.active { background: var(--primary); color: #fff; }
-
-.tag-row {
-  display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; width: 100%;
-  scrollbar-width: none; -ms-overflow-style: none;
-}
-.tag-row::-webkit-scrollbar { display: none; }
-.tag-row::after { content: ''; min-width: 24px; flex-shrink: 0; }
-.tag-btn {
-  display: flex; align-items: center; gap: 4px; padding: 6px 12px;
-  border-radius: 20px; font-size: 12px; font-weight: 500;
-  color: var(--text-dim); background: var(--surface); white-space: nowrap;
-  border: 1px solid transparent; transition: all 0.3s;
-}
-.tag-btn.active {
-  color: #fff; background: rgba(255,255,255,0.08);
-  border-color: var(--primary);
-}
 
 /* Timer ring */
 .timer-container { position: relative; margin: 28px 0 16px; }
@@ -111,8 +91,6 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 11px; font-weight: 500; text-transform: uppercase;
   letter-spacing: 4px; color: var(--text-dim); margin-top: 10px;
 }
-
-/* Controls */
 .controls { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
 .ctrl-btn {
   width: 50px; height: 50px; border-radius: 50%; display: flex;
@@ -128,71 +106,77 @@ input[type="range"]::-webkit-slider-thumb {
   color: #fff; box-shadow: 0 8px 32px var(--glow); transition: transform 0.15s;
 }
 .main-btn:active { transform: scale(0.92); }
-
-/* Session dots */
 .session-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
-.dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: rgba(255,255,255,0.1); transition: background 0.3s;
-}
+.dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: background 0.3s; }
 .dot.filled { background: var(--primary); }
 .today-count { font-size: 12px; color: var(--text-dimmer); margin-top: 10px; }
-
-/* Daily goal bar */
 .goal-bar { width: 100%; max-width: 300px; margin-top: 16px; padding: 0 40px; }
 .goal-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .goal-header span { font-size: 11px; font-weight: 500; }
 .goal-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.goal-fill {
-  height: 100%; border-radius: 3px; transition: width 0.5s ease;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-}
+.goal-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; background: linear-gradient(90deg, var(--primary), var(--accent)); }
 
-/* Stats screen */
+/* Session complete overlay */
+.session-complete-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.45); z-index: 50;
+  animation: fadeIn 0.3s ease;
+}
+.session-complete-card {
+  text-align: center; padding: 32px 40px;
+  background: rgba(22,22,22,0.97); border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-width: 260px;
+}
+.session-complete-card .sc-emoji { font-size: 52px; }
+.session-complete-card .sc-title { font-size: 20px; font-weight: 700; margin-top: 12px; }
+.session-complete-card .sc-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+.session-complete-card .sc-overtime { font-size: 38px; font-weight: 200; color: var(--accent); font-variant-numeric: tabular-nums; margin-top: 16px; letter-spacing: 2px; }
+.session-complete-card .sc-overtime-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-dim); margin-top: 2px; }
+.session-complete-card .sc-hint { font-size: 11px; color: var(--text-dimmer); margin-top: 20px; }
+
+/* Stats */
 .stats-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .stats-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-.stats-subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
 .stat-row { display: flex; gap: 12px; margin-bottom: 20px; }
-.stat-card {
-  flex: 1; text-align: center; padding: 14px 8px;
-  background: var(--surface); border-radius: 14px;
-  border: 1px solid var(--surface2);
-}
+.stat-card { flex: 1; text-align: center; padding: 14px 8px; background: var(--surface); border-radius: 14px; border: 1px solid var(--surface2); }
 .stat-card .icon { font-size: 16px; }
 .stat-card .val { font-size: 20px; font-weight: 700; margin: 4px 0 2px; }
 .stat-card .lbl { font-size: 10px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-
-.tab-picker { display: flex; gap: 0; margin-bottom: 20px; background: var(--surface); border-radius: 10px; padding: 3px; }
-.tab-pick {
-  flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600;
-  border-radius: 8px; color: var(--text-dim); transition: all 0.3s;
-}
+.tab-picker { display: flex; margin-bottom: 20px; background: var(--surface); border-radius: 10px; padding: 3px; }
+.tab-pick { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600; border-radius: 8px; color: var(--text-dim); transition: all 0.3s; }
 .tab-pick.active { background: rgba(255,255,255,0.08); color: var(--text); }
 
 /* Weekly chart */
-.week-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; gap: 8px; margin-bottom: 8px; }
+.week-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; gap: 6px; margin-bottom: 8px; }
 .week-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
-.week-bar-count { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); min-height: 16px; }
 .week-bar {
-  width: 100%; max-width: 36px; border-radius: 8px; min-height: 4px;
-  background: rgba(255,255,255,0.04); transition: height 0.5s;
+  width: 100%; max-width: 38px; border-radius: 8px; min-height: 4px;
+  background: rgba(255,255,255,0.04); position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center;
 }
 .week-bar.has-data { background: rgba(255,255,255,0.12); }
 .week-bar.today { background: linear-gradient(to top, var(--primary), var(--accent)); }
 .week-bar.today.has-data { box-shadow: 0 4px 16px var(--glow); }
+.week-bar-mins {
+  position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center;
+  writing-mode: vertical-lr; transform: rotate(180deg);
+  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.9);
+  letter-spacing: 0.5px; pointer-events: none; padding: 4px 0;
+}
 .week-day-label { font-size: 11px; color: var(--text-dimmer); }
 .week-day-label.today { color: rgba(255,255,255,0.8); font-weight: 600; }
 
-/* Monthly heatmap */
+/* Heatmap */
 .month-title { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
 .heatmap-headers { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
 .heatmap-headers span { text-align: center; font-size: 10px; font-weight: 500; color: var(--text-dimmer); }
 .heatmap-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
-.heatmap-cell {
-  aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center;
-  justify-content: center; font-size: 11px; color: var(--text-dimmer);
-  background: var(--surface); cursor: default; transition: background 0.3s;
-}
+.heatmap-cell { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-dimmer); background: var(--surface); transition: background 0.3s; }
 .heatmap-cell.today { outline: 1.5px solid rgba(255,255,255,0.3); }
 .heatmap-cell.future { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.12); }
 .heatmap-cell.lvl1 { background: rgba(232,85,58,0.25); color: rgba(255,255,255,0.8); }
@@ -204,60 +188,30 @@ input[type="range"]::-webkit-slider-thumb {
 .heatmap-legend { display: flex; align-items: center; gap: 4px; justify-content: center; margin-top: 12px; }
 .heatmap-legend span { font-size: 10px; color: var(--text-dimmer); }
 .legend-box { width: 14px; height: 14px; border-radius: 3px; }
-
-/* Summary grid */
 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
-.summary-card {
-  padding: 16px; background: var(--surface); border-radius: 14px;
-  border: 1px solid var(--surface2);
-}
+.summary-card { padding: 16px; background: var(--surface); border-radius: 14px; border: 1px solid var(--surface2); }
 .summary-card .lbl { font-size: 11px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
 .summary-card .val { font-size: 24px; font-weight: 600; }
+.reset-btn { width: 100%; padding: 14px; border-radius: 14px; margin-top: 24px; font-size: 13px; font-weight: 500; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.08); background: transparent; }
 
-.reset-btn {
-  width: 100%; padding: 14px; border-radius: 14px; margin-top: 24px;
-  font-size: 13px; font-weight: 500; color: var(--text-dim);
-  border: 1px solid rgba(255,255,255,0.08); background: transparent;
-}
-
-/* Settings screen */
+/* Settings */
 .settings-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .settings-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
-.settings-group {
-  padding: 20px; margin-bottom: 16px; background: var(--surface);
-  border-radius: 18px; border: 1px solid var(--surface2);
-}
-.settings-group h3 {
-  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
-}
+.settings-group { padding: 20px; margin-bottom: 16px; background: var(--surface); border-radius: 18px; border: 1px solid var(--surface2); }
+.settings-group h3 { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
 .setting-item { margin-bottom: 18px; }
 .setting-item:last-child { margin-bottom: 0; }
 .setting-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
 .setting-header .lbl { font-size: 14px; color: rgba(255,255,255,0.65); }
 .setting-header .val { font-size: 14px; font-weight: 600; color: var(--accent); }
-.save-btn {
-  width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 600;
-  color: #fff; background: linear-gradient(135deg, var(--primary), var(--accent));
-  margin-top: 8px;
-}
+.save-btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 600; color: #fff; background: linear-gradient(135deg, var(--primary), var(--accent)); margin-top: 8px; }
 .about { text-align: center; padding: 24px 0; }
 .about .name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3); }
 .about .tagline { font-size: 12px; color: rgba(255,255,255,0.2); margin-top: 4px; }
 
-/* Goal celebration */
-.celebration {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.5); z-index: 100;
-  animation: fadeIn 0.3s ease;
-}
-.celebration-card {
-  text-align: center; padding: 32px;
-  background: rgba(30,30,30,0.95); border-radius: 24px;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+/* Celebration */
+.celebration { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 100; animation: fadeIn 0.3s ease; }
+.celebration-card { text-align: center; padding: 32px; background: rgba(30,30,30,0.95); border-radius: 24px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .celebration-card .emoji { font-size: 44px; }
 .celebration-card .msg { font-size: 18px; font-weight: 600; margin-top: 8px; }
 
@@ -289,11 +243,11 @@ input[type="range"]::-webkit-slider-thumb {
 // DATA LAYER
 // ============================================================
 const STORE_KEY = 'pomodojo_data';
+const STATE_KEY = 'pomodojo_timer_state';
 
 const defaults = {
   settings: { focusDuration: 25, breakDuration: 5, longBreakDuration: 15, sessionsBeforeLongBreak: 4, dailyGoal: 4 },
-  sessions: [],
-  longestStreak: 0
+  sessions: [], longestStreak: 0
 };
 
 function loadData() {
@@ -306,66 +260,111 @@ function loadData() {
   } catch(e) {}
   return { ...defaults };
 }
-
-function saveData(data) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {}
-}
+function saveData(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {} }
 
 let data = loadData();
 
 function dateKey(d = new Date()) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-
-function sessionsForDate(dk) {
-  return data.sessions.filter(s => s.dateKey === dk);
-}
-
+function sessionsForDate(dk) { return data.sessions.filter(s => s.dateKey === dk); }
 function todayCount() { return sessionsForDate(dateKey()).length; }
 
 function calcStreak() {
-  const cal = new Date();
-  cal.setHours(0,0,0,0);
   let streak = 0;
-  let check = new Date(cal);
-  if (sessionsForDate(dateKey(check)).length === 0) {
+  let check = new Date(); check.setHours(0,0,0,0);
+  if (sessionsForDate(dateKey(check)).length === 0) check.setDate(check.getDate() - 1);
+  while (sessionsForDate(dateKey(check)).length > 0) {
+    streak++;
     check.setDate(check.getDate() - 1);
   }
-  while (true) {
-    if (sessionsForDate(dateKey(check)).length > 0) {
-      streak++;
-      check.setDate(check.getDate() - 1);
-    } else break;
-  }
-  if (streak > data.longestStreak) {
-    data.longestStreak = streak;
-    saveData(data);
-  }
+  if (streak > data.longestStreak) { data.longestStreak = streak; saveData(data); }
   return streak;
 }
 
-function addSession(tag, focusDur, overtimeDur) {
+function addSession(focusDur, overtimeSec) {
   data.sessions.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-    date: new Date().toISOString(),
-    dateKey: dateKey(),
-    tag, focusDuration: focusDur, overtimeDuration: overtimeDur, completed: true
+    date: new Date().toISOString(), dateKey: dateKey(),
+    focusDuration: focusDur, overtimeDuration: overtimeSec, completed: true
   });
   saveData(data);
+}
+
+function minutesForDate(dk) {
+  return Math.round(sessionsForDate(dk).reduce((a, s) => a + (s.focusDuration||0) + (s.overtimeDuration||0), 0) / 60);
 }
 
 // ============================================================
 // TIMER STATE
 // ============================================================
-let mode = 'focus'; // focus, shortBreak, longBreak
+let mode = 'focus';
 let timeRemaining = data.settings.focusDuration * 60;
 let scheduledDuration = data.settings.focusDuration * 60;
 let isRunning = false;
-let isOvertime = false;
+let sessionComplete = false;
 let overtimeSeconds = 0;
 let completedSessions = 0;
-let selectedTag = 'Untagged';
 let timerInterval = null;
+// Wall-clock anchors
+let timerStartWall = null;    // wall ms when timer last (re)started
+let timerStartRemain = null;  // timeRemaining at that moment
+let sessionEndWall = null;    // wall ms when focus hit 00:00
+
+function saveTimerState() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      mode, timeRemaining, scheduledDuration, isRunning,
+      sessionComplete, overtimeSeconds, completedSessions,
+      timerStartWall, timerStartRemain, sessionEndWall,
+      savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function loadTimerState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    mode = s.mode || 'focus';
+    scheduledDuration = s.scheduledDuration || data.settings.focusDuration * 60;
+    completedSessions = s.completedSessions || 0;
+    sessionComplete = s.sessionComplete || false;
+    timerStartWall = s.timerStartWall || null;
+    timerStartRemain = s.timerStartRemain || null;
+    sessionEndWall = s.sessionEndWall || null;
+
+    const now = Date.now();
+    const gap = Math.floor((now - (s.savedAt || now)) / 1000);
+
+    if (s.isRunning && gap > 0) {
+      if (s.sessionComplete) {
+        // Was tracking overtime while away
+        overtimeSeconds = (s.overtimeSeconds || 0) + gap;
+        timeRemaining = 0;
+      } else {
+        // Was counting down
+        const newRemain = Math.max(0, (s.timeRemaining || 0) - gap);
+        timeRemaining = newRemain;
+        overtimeSeconds = 0;
+        if (newRemain === 0) {
+          sessionComplete = true;
+          const crossedZeroAt = now - ((gap - (s.timeRemaining||0)) * 1000);
+          sessionEndWall = crossedZeroAt;
+          overtimeSeconds = Math.max(0, Math.floor((now - crossedZeroAt) / 1000));
+        }
+      }
+    } else {
+      timeRemaining = s.timeRemaining || scheduledDuration;
+      overtimeSeconds = s.overtimeSeconds || 0;
+    }
+    // Always restore paused so user can see where they left off
+    isRunning = false;
+  } catch(e) {
+    setDuration('focus');
+  }
+}
 
 const modeThemes = {
   focus:      { primary:'--focus', accent:'--focus-accent', bg:'--focus-bg', glow:'--focus-glow' },
@@ -377,9 +376,9 @@ function applyTheme() {
   const t = modeThemes[mode];
   const r = document.documentElement.style;
   r.setProperty('--primary', `var(${t.primary})`);
-  r.setProperty('--accent', `var(${t.accent})`);
+  r.setProperty('--accent',  `var(${t.accent})`);
   r.setProperty('--mode-bg', `var(${t.bg})`);
-  r.setProperty('--glow', `var(${t.glow})`);
+  r.setProperty('--glow',    `var(${t.glow})`);
 }
 
 function setDuration(m) {
@@ -387,44 +386,71 @@ function setDuration(m) {
   const mins = m === 'focus' ? s.focusDuration : m === 'shortBreak' ? s.breakDuration : s.longBreakDuration;
   scheduledDuration = mins * 60;
   timeRemaining = scheduledDuration;
-  isOvertime = false;
+  sessionComplete = false;
   overtimeSeconds = 0;
+  timerStartWall = timerStartRemain = sessionEndWall = null;
 }
 
 function formatTime(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
+  const m = Math.floor(Math.abs(sec) / 60);
+  const s = Math.abs(sec) % 60;
   return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
 }
 
+// ============================================================
+// TICK — wall-clock compensated
+// ============================================================
 function tick() {
+  const now = Date.now();
+
   if (mode === 'focus') {
-    if (timeRemaining > 0) {
-      timeRemaining--;
+    if (!sessionComplete) {
+      // Compensate using wall clock
+      if (timerStartWall !== null) {
+        const elapsed = Math.floor((now - timerStartWall) / 1000);
+        timeRemaining = Math.max(0, timerStartRemain - elapsed);
+      } else {
+        timeRemaining = Math.max(0, timeRemaining - 1);
+      }
       if (timeRemaining === 0) {
-        isOvertime = true;
+        sessionComplete = true;
+        sessionEndWall = now;
+        overtimeSeconds = 0;
         sendNotification();
+        saveTimerState();
+        showSessionCompleteOverlay();
       }
     } else {
-      overtimeSeconds++;
+      // Overtime — count up from when session ended
+      overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
     }
   } else {
-    if (timeRemaining > 0) {
-      timeRemaining--;
+    // Break countdown
+    if (timerStartWall !== null) {
+      const elapsed = Math.floor((now - timerStartWall) / 1000);
+      timeRemaining = Math.max(0, timerStartRemain - elapsed);
     } else {
-      // Break over, auto-switch to focus
+      timeRemaining = Math.max(0, timeRemaining - 1);
+    }
+    if (timeRemaining === 0) {
       stopTimer();
       switchMode('focus');
       renderTimer();
+      return;
     }
   }
+  saveTimerState();
   renderTimer();
 }
 
 function startTimer() {
   if (isRunning) return;
   isRunning = true;
+  timerStartWall = Date.now();
+  timerStartRemain = sessionComplete ? 0 : timeRemaining;
+  if (sessionComplete && !sessionEndWall) sessionEndWall = Date.now();
   timerInterval = setInterval(tick, 1000);
+  saveTimerState();
   renderTimer();
 }
 
@@ -432,95 +458,128 @@ function stopTimer() {
   isRunning = false;
   clearInterval(timerInterval);
   timerInterval = null;
+  timerStartWall = null;
+  timerStartRemain = null;
 }
 
-function pauseTimer() {
-  stopTimer();
-  renderTimer();
-}
-
-function toggleTimer() {
-  if (isRunning) pauseTimer();
-  else startTimer();
-}
+function pauseTimer() { stopTimer(); saveTimerState(); renderTimer(); }
+function toggleTimer() { if (isRunning) pauseTimer(); else startTimer(); }
 
 function resetTimer() {
-  stopTimer();
-  setDuration(mode);
-  renderTimer();
+  stopTimer(); setDuration(mode); saveTimerState(); renderTimer();
 }
 
 function switchMode(m) {
-  stopTimer();
-  mode = m;
-  setDuration(m);
-  applyTheme();
-  renderTimer();
+  stopTimer(); mode = m; setDuration(m); applyTheme(); saveTimerState(); renderTimer();
 }
 
 function endFocusSession() {
   stopTimer();
   const goalBefore = todayCount() >= data.settings.dailyGoal;
-  addSession(selectedTag, scheduledDuration, overtimeSeconds);
+  addSession(scheduledDuration, overtimeSeconds);
   completedSessions++;
-  isOvertime = false;
-  overtimeSeconds = 0;
+  sessionComplete = false; overtimeSeconds = 0;
 
-  // Auto-transition to break
-  if (completedSessions % data.settings.sessionsBeforeLongBreak === 0) {
-    switchMode('longBreak');
-  } else {
-    switchMode('shortBreak');
-  }
-  startTimer(); // Auto-start break
+  if (completedSessions % data.settings.sessionsBeforeLongBreak === 0) switchMode('longBreak');
+  else switchMode('shortBreak');
+  startTimer();
 
-  if (!goalBefore && todayCount() >= data.settings.dailyGoal) {
-    showCelebration();
-  }
+  if (!goalBefore && todayCount() >= data.settings.dailyGoal) showCelebration();
 }
 
 function skipToNext() {
   stopTimer();
   if (mode === 'focus') {
-    if (isOvertime || timeRemaining < scheduledDuration) {
-      endFocusSession();
-    } else {
+    if (sessionComplete || timeRemaining < scheduledDuration) endFocusSession();
+    else {
       const isLong = (completedSessions + 1) % data.settings.sessionsBeforeLongBreak === 0;
       switchMode(isLong ? 'longBreak' : 'shortBreak');
     }
-  } else {
-    switchMode('focus');
-  }
+  } else switchMode('focus');
 }
+
+// ============================================================
+// VISIBILITY — correct on app return
+// ============================================================
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (isRunning) {
+      const now = Date.now();
+      if (!sessionComplete && timerStartWall !== null) {
+        const elapsed = Math.floor((now - timerStartWall) / 1000);
+        timeRemaining = Math.max(0, timerStartRemain - elapsed);
+        if (timeRemaining === 0) {
+          sessionComplete = true;
+          sessionEndWall = timerStartWall + (timerStartRemain * 1000);
+          overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
+          sendNotification();
+          showSessionCompleteOverlay();
+        }
+      } else if (sessionComplete && sessionEndWall) {
+        overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
+      }
+      saveTimerState();
+      renderTimer();
+    }
+  } else {
+    saveTimerState();
+  }
+});
+window.addEventListener('pagehide', saveTimerState);
+window.addEventListener('beforeunload', saveTimerState);
 
 // ============================================================
 // NOTIFICATIONS
 // ============================================================
 function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 }
-
 function sendNotification() {
   if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Pomodojo', {
-      body: 'Focus session complete! Keep going or take a break.',
-      icon: '🥋',
-      tag: 'pomodojo-timer'
-    });
+    new Notification('Pomodojo', { body: 'Focus session complete! Keep going or take a break.', icon: 'apple-touch-icon.png', tag: 'pomodojo-timer' });
   }
-  // Also play a sound via audio context
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
     osc.frequency.value = 800;
     gain.gain.setValueAtTime(0.3, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
     osc.start(); osc.stop(ctx.currentTime + 0.8);
-  } catch(e){}
+  } catch(e) {}
+}
+
+// ============================================================
+// SESSION COMPLETE OVERLAY
+// ============================================================
+let overlayEl = null, overlayInterval = null;
+
+function showSessionCompleteOverlay() {
+  dismissOverlay();
+  overlayEl = document.createElement('div');
+  overlayEl.className = 'session-complete-overlay';
+  overlayEl.innerHTML = `
+    <div class="session-complete-card">
+      <div class="sc-emoji">🎯</div>
+      <div class="sc-title">Session Complete!</div>
+      <div class="sc-subtitle">Overtime is tracking below.<br>Keep going — it all counts.</div>
+      <div class="sc-overtime" id="overlayOT">+00:00</div>
+      <div class="sc-overtime-lbl">Overtime</div>
+      <div class="sc-hint">Tap anywhere to dismiss</div>
+    </div>`;
+  overlayEl.addEventListener('click', dismissOverlay);
+  document.body.appendChild(overlayEl);
+  overlayInterval = setInterval(() => {
+    const el = document.getElementById('overlayOT');
+    if (el) el.textContent = '+' + formatTime(overtimeSeconds);
+    else { clearInterval(overlayInterval); overlayInterval = null; }
+  }, 1000);
+  setTimeout(dismissOverlay, 5000);
+}
+
+function dismissOverlay() {
+  if (overlayEl) { overlayEl.remove(); overlayEl = null; }
+  if (overlayInterval) { clearInterval(overlayInterval); overlayInterval = null; }
 }
 
 // ============================================================
@@ -536,7 +595,7 @@ function showCelebration() {
 }
 
 // ============================================================
-// RENDERING
+// RENDER
 // ============================================================
 let currentTab = 'timer';
 
@@ -545,58 +604,41 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   if (tab === 'timer') renderTimer();
   else if (tab === 'stats') renderStats();
-  else if (tab === 'settings') renderSettings();
+  else renderSettings();
 }
 
-// ---- TIMER RENDER ----
 function renderTimer() {
   if (currentTab !== 'timer') return;
   const tc = document.getElementById('tabContent');
-  const progress = isOvertime ? 1 : (scheduledDuration > 0 ? 1 - timeRemaining / scheduledDuration : 0);
+  const progress = sessionComplete ? 1 : (scheduledDuration > 0 ? 1 - timeRemaining / scheduledDuration : 0);
   const circumference = 2 * Math.PI * 130;
   const offset = circumference * (1 - progress);
   const streak = calcStreak();
   const tc2 = todayCount();
-  const goalProg = data.settings.dailyGoal > 0 ? Math.min(1, tc2 / data.settings.dailyGoal) : 0;
+  const goalProg = Math.min(1, tc2 / Math.max(1, data.settings.dailyGoal));
   const goalMet = tc2 >= data.settings.dailyGoal;
   const dotCount = data.settings.sessionsBeforeLongBreak;
   const filledDots = completedSessions % dotCount;
-
-  const modeLabels = { focus: 'Focus', shortBreak: 'Break', longBreak: 'Long Break' };
-  const tags = [
-    { id:'Work', emoji:'💼' }, { id:'Study', emoji:'📚' }, { id:'Personal', emoji:'🏠' },
-    { id:'Health', emoji:'💪' }
-  ];
-
-  // Progress dot position
+  const modeLabels = { focus:'Focus', shortBreak:'Break', longBreak:'Long Break' };
   const angle = 2 * Math.PI * progress - Math.PI / 2;
   const dotX = 145 + 130 * Math.cos(angle);
   const dotY = 145 + 130 * Math.sin(angle);
 
-  // Button logic
   let mainBtnIcon, mainBtnAction;
-  if (mode === 'focus' && isOvertime) {
-    mainBtnIcon = '⏹'; mainBtnAction = 'endFocusSession()';
-  } else {
-    mainBtnIcon = isRunning ? '❚❚' : '▶'; mainBtnAction = 'toggleTimer()';
-  }
+  if (mode === 'focus' && sessionComplete) { mainBtnIcon = '⏹'; mainBtnAction = 'endFocusSession()'; }
+  else { mainBtnIcon = isRunning ? '❚❚' : '▶'; mainBtnAction = 'toggleTimer()'; }
+
+  const displayTime = sessionComplete ? '+' + formatTime(overtimeSeconds) : formatTime(timeRemaining);
+  const displayLabel = sessionComplete ? 'Overtime' : modeLabels[mode];
 
   tc.innerHTML = `
     <div class="timer-screen">
-      <div class="streak-banner">
-        ${streak > 0 ? `<span>🔥</span><span>${streak} day streak</span>` : ''}
-      </div>
-
+      <div class="streak-banner">${streak > 0 ? `<span>🔥</span><span>${streak} day streak</span>` : ''}</div>
       <div class="mode-selector">
         <button class="mode-btn ${mode==='focus'?'active':''}" onclick="switchMode('focus')">Focus</button>
         <button class="mode-btn ${mode==='shortBreak'?'active':''}" onclick="switchMode('shortBreak')">Break</button>
         <button class="mode-btn ${mode==='longBreak'?'active':''}" onclick="switchMode('longBreak')">Long Break</button>
       </div>
-
-      <div class="tag-row">
-        ${tags.map(t => `<button class="tag-btn ${selectedTag===t.id?'active':''}" onclick="selectedTag='${t.id}';renderTimer()">${t.emoji} ${t.id}</button>`).join('')}
-      </div>
-
       <div class="timer-container">
         <div class="timer-glow ${isRunning?'running':''}"></div>
         <svg width="290" height="290" viewBox="0 0 290 290">
@@ -614,24 +656,19 @@ function renderTimer() {
           </defs>
         </svg>
         <div class="timer-display">
-          <div class="timer-time ${isOvertime?'overtime':''}">
-            ${isOvertime ? '+' + formatTime(overtimeSeconds) : formatTime(timeRemaining)}
-          </div>
-          <div class="timer-label">${isOvertime ? 'Overtime' : modeLabels[mode]}</div>
+          <div class="timer-time ${sessionComplete?'overtime':''}">${displayTime}</div>
+          <div class="timer-label">${displayLabel}</div>
         </div>
       </div>
-
       <div class="controls">
         <button class="ctrl-btn" onclick="resetTimer()">↺</button>
         <button class="main-btn" onclick="${mainBtnAction}">${mainBtnIcon}</button>
         <button class="ctrl-btn" onclick="skipToNext()">⏭</button>
       </div>
-
       <div class="session-dots">
-        ${Array.from({length:dotCount}, (_,i) => `<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}
+        ${Array.from({length:dotCount},(_,i)=>`<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}
       </div>
       <div class="today-count">${tc2} session${tc2===1?'':'s'} today</div>
-
       <div class="goal-bar">
         <div class="goal-header">
           <span style="color:var(--text-dim)">Daily Goal</span>
@@ -639,11 +676,10 @@ function renderTimer() {
         </div>
         <div class="goal-track"><div class="goal-fill" style="width:${goalProg*100}%"></div></div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// ---- STATS RENDER ----
+// ---- STATS ----
 let statsTab = 'weekly';
 let selectedHeatmapDay = null;
 
@@ -651,7 +687,6 @@ function renderStats() {
   if (currentTab !== 'stats') return;
   const tc = document.getElementById('tabContent');
   const streak = calcStreak();
-
   tc.innerHTML = `
     <div class="stats-screen">
       <h2>Progress</h2>
@@ -660,20 +695,14 @@ function renderStats() {
         <div class="stat-card"><div class="icon">🏆</div><div class="val">${data.longestStreak}</div><div class="lbl">Longest</div></div>
         <div class="stat-card"><div class="icon">📊</div><div class="val">${data.sessions.length}</div><div class="lbl">Lifetime</div></div>
       </div>
-
       <div class="tab-picker">
         <button class="tab-pick ${statsTab==='weekly'?'active':''}" onclick="statsTab='weekly';renderStats()">Weekly</button>
         <button class="tab-pick ${statsTab==='monthly'?'active':''}" onclick="statsTab='monthly';renderStats()">Monthly</button>
       </div>
-
       <div id="statsContent"></div>
-
       ${renderSummaryCards()}
-
       <button class="reset-btn" onclick="if(confirm('Reset all history?')){data.sessions=[];data.longestStreak=0;saveData(data);renderStats();}">Reset All History</button>
-    </div>
-  `;
-
+    </div>`;
   if (statsTab === 'weekly') renderWeekly();
   else renderMonthly();
 }
@@ -685,54 +714,48 @@ function renderWeekly() {
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const dk = dateKey(d);
-    const count = sessionsForDate(dk).length;
-    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-    const isToday = i === 0;
-    days.push({ dk, count, dayName, isToday });
+    const mins = minutesForDate(dk);
+    days.push({ mins, dayName: d.toLocaleDateString('en-US',{weekday:'short'}), isToday: i===0, hasData: mins>0 });
   }
-  const max = Math.max(1, ...days.map(d => d.count));
+  const maxMins = Math.max(1, ...days.map(d => d.mins));
 
   container.innerHTML = `
     <div class="week-chart">
       ${days.map(d => {
-        const h = Math.max(4, (d.count / max) * 130);
+        const h = Math.max(4, (d.mins / maxMins) * 130);
+        const label = d.mins >= 60
+          ? Math.floor(d.mins/60) + 'h' + (d.mins%60>0 ? (d.mins%60)+'m' : '')
+          : (d.mins > 0 ? d.mins+'m' : '');
+        const showLabel = d.mins > 0 && h >= 26;
         return `<div class="week-bar-col">
-          <div class="week-bar-count">${d.count||''}</div>
-          <div class="week-bar ${d.count>0?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px"></div>
+          <div class="week-bar ${d.hasData?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px">
+            ${showLabel ? `<div class="week-bar-mins">${label}</div>` : ''}
+          </div>
           <div class="week-day-label ${d.isToday?'today':''}">${d.dayName}</div>
         </div>`;
       }).join('')}
-    </div>
-  `;
+    </div>`;
 }
 
 function renderMonthly() {
   const container = document.getElementById('statsContent');
   const now = new Date();
   const year = now.getFullYear(), month = now.getMonth();
-  const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthName = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const firstDay = new Date(year,month,1).getDay();
+  const daysInMonth = new Date(year,month+1,0).getDate();
   const todayDk = dateKey();
-  const headers = ['S','M','T','W','T','F','S'];
 
   let cells = '';
   for (let i = 0; i < firstDay; i++) cells += '<div class="heatmap-cell" style="background:transparent"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const dk = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const count = sessionsForDate(dk).length;
-    const isToday = dk === todayDk;
-    const isFuture = dk > todayDk;
+    const isToday = dk===todayDk, isFuture = dk>todayDk;
     let lvl = '';
-    if (!isFuture && count > 0) {
-      if (count >= 8) lvl = 'lvl5';
-      else if (count >= 5) lvl = 'lvl4';
-      else if (count >= 3) lvl = 'lvl3';
-      else if (count >= 2) lvl = 'lvl2';
-      else lvl = 'lvl1';
-    }
-    const cls = [isToday?'today':'', isFuture?'future':'', lvl].filter(Boolean).join(' ');
-    const click = count > 0 ? `onclick="selectedHeatmapDay=selectedHeatmapDay==='${dk}'?null:'${dk}';renderStats()"` : '';
+    if (!isFuture && count > 0) lvl = count>=8?'lvl5':count>=5?'lvl4':count>=3?'lvl3':count>=2?'lvl2':'lvl1';
+    const cls = [isToday?'today':'',isFuture?'future':'',lvl].filter(Boolean).join(' ');
+    const click = count>0 ? `onclick="selectedHeatmapDay=selectedHeatmapDay==='${dk}'?null:'${dk}';renderStats()"` : '';
     cells += `<div class="heatmap-cell ${cls}" ${click}>${d}</div>`;
   }
 
@@ -741,14 +764,15 @@ function renderMonthly() {
     const sc = sessionsForDate(selectedHeatmapDay);
     if (sc.length > 0) {
       const dd = new Date(selectedHeatmapDay + 'T12:00:00');
-      const label = dd.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-      selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'}</span></div>`;
+      const label = dd.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+      const mins = minutesForDate(selectedHeatmapDay);
+      selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'} · ${mins}m</span></div>`;
     }
   }
 
   container.innerHTML = `
     <div class="month-title">${monthName}</div>
-    <div class="heatmap-headers">${headers.map(h => `<span>${h}</span>`).join('')}</div>
+    <div class="heatmap-headers">${['S','M','T','W','T','F','S'].map(h=>`<span>${h}</span>`).join('')}</div>
     <div class="heatmap-grid">${cells}</div>
     ${selectedInfo}
     <div class="heatmap-legend">
@@ -760,117 +784,83 @@ function renderMonthly() {
       <div class="legend-box" style="background:rgba(232,85,58,0.8)"></div>
       <div class="legend-box" style="background:rgba(232,85,58,1)"></div>
       <span>More</span>
-    </div>
-  `;
+    </div>`;
 }
 
 function renderSummaryCards() {
   const today = new Date(); today.setHours(0,0,0,0);
-  let weekTotal = 0, weekMinutes = 0, bestDay = 0;
+  let weekTotal = 0, weekMins = 0, bestDay = 0;
   for (let i = 0; i < 7; i++) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
-    const s = sessionsForDate(dateKey(d));
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const dk = dateKey(d);
+    const s = sessionsForDate(dk);
     weekTotal += s.length;
     if (s.length > bestDay) bestDay = s.length;
-    weekMinutes += s.reduce((a, r) => a + (r.focusDuration + (r.overtimeDuration||0)), 0);
+    weekMins += minutesForDate(dk);
   }
-  const weekMinFormatted = weekMinutes >= 3600 ? Math.floor(weekMinutes/3600) + 'h ' + Math.floor((weekMinutes%3600)/60) + 'm' : Math.floor(weekMinutes/60) + 'm';
-
+  const wh = Math.floor(weekMins/60), wm = weekMins%60;
+  const weekFmt = wh > 0 ? `${wh}h ${wm}m` : `${wm}m`;
   return `
     <div class="summary-grid">
       <div class="summary-card"><div class="lbl">Today</div><div class="val">${todayCount()}</div></div>
       <div class="summary-card"><div class="lbl">This Week</div><div class="val">${weekTotal}</div></div>
       <div class="summary-card"><div class="lbl">Best Day</div><div class="val">${bestDay}</div></div>
-      <div class="summary-card"><div class="lbl">Focus Time</div><div class="val">${weekMinFormatted}</div></div>
-    </div>
-  `;
+      <div class="summary-card"><div class="lbl">Focus Time</div><div class="val">${weekFmt}</div></div>
+    </div>`;
 }
 
-// ---- SETTINGS RENDER ----
+// ---- SETTINGS ----
 let tempSettings = { ...data.settings };
 
 function renderSettings() {
   if (currentTab !== 'settings') return;
   tempSettings = { ...data.settings };
-  const tc = document.getElementById('tabContent');
-
-  tc.innerHTML = `
+  document.getElementById('tabContent').innerHTML = `
     <div class="settings-screen">
       <h2>Settings</h2>
-
       <div class="settings-group">
         <h3>Timer</h3>
-        ${settingSlider('focusDuration', 'Focus Duration', 'min', 1, 60, '#E8553A')}
-        ${settingSlider('breakDuration', 'Break Duration', 'min', 1, 30, '#3AAF85')}
-        ${settingSlider('longBreakDuration', 'Long Break Duration', 'min', 1, 30, '#5B7FE8')}
-        ${settingSlider('sessionsBeforeLongBreak', 'Sessions Before Long Break', '', 2, 8, 'rgba(255,255,255,0.6)')}
+        ${settingSlider('focusDuration','Focus Duration','min',1,60,'#E8553A')}
+        ${settingSlider('breakDuration','Break Duration','min',1,30,'#3AAF85')}
+        ${settingSlider('longBreakDuration','Long Break Duration','min',1,30,'#5B7FE8')}
+        ${settingSlider('sessionsBeforeLongBreak','Sessions Before Long Break','',2,8,'rgba(255,255,255,0.6)')}
       </div>
-
       <div class="settings-group">
         <h3>Goals</h3>
-        ${settingSlider('dailyGoal', 'Daily Session Goal', 'sessions', 1, 12, '#FFB932')}
+        ${settingSlider('dailyGoal','Daily Session Goal','sessions',1,12,'#FFB932')}
       </div>
-
       <button class="save-btn" onclick="saveSettings()">Save Settings</button>
-
-      <div class="about">
-        <div class="name">Pomodojo</div>
-        <div class="tagline">Focus. Rest. Repeat.</div>
-      </div>
-    </div>
-  `;
+      <div class="about"><div class="name">Pomodojo</div><div class="tagline">Focus. Rest. Repeat.</div></div>
+    </div>`;
 }
 
 function settingSlider(key, label, unit, min, max, color) {
   const val = tempSettings[key];
-  const display = unit ? `${val} ${unit}` : `${val}`;
-  return `
-    <div class="setting-item">
-      <div class="setting-header">
-        <span class="lbl">${label}</span>
-        <span class="val" id="val_${key}" style="color:${color}">${display}</span>
-      </div>
-      <input type="range" min="${min}" max="${max}" value="${val}"
-        style="--primary:${color}" oninput="updateSetting('${key}','${unit}',this.value,'${color}')">
+  return `<div class="setting-item">
+    <div class="setting-header">
+      <span class="lbl">${label}</span>
+      <span class="val" id="val_${key}" style="color:${color}">${val}${unit?' '+unit:''}</span>
     </div>
-  `;
-}
-
-function updateSetting(key, unit, val, color) {
-  tempSettings[key] = parseInt(val);
-  const el = document.getElementById('val_' + key);
-  if (el) el.textContent = unit ? `${val} ${unit}` : val;
+    <input type="range" min="${min}" max="${max}" value="${val}" style="--primary:${color}"
+      oninput="tempSettings['${key}']=parseInt(this.value);document.getElementById('val_${key}').textContent=this.value+'${unit?' '+unit:''}'">
+  </div>`;
 }
 
 function saveSettings() {
   data.settings = { ...tempSettings };
   saveData(data);
-  // Reset timer with new settings
-  mode = 'focus';
-  setDuration('focus');
-  stopTimer();
-  applyTheme();
+  mode = 'focus'; setDuration('focus'); stopTimer(); applyTheme();
   switchTab('timer');
 }
 
 // ============================================================
 // INIT
 // ============================================================
+loadTimerState();
 applyTheme();
 renderTimer();
 requestNotificationPermission();
-
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-
-// Visibility change - stop timer when hidden (per spec: pause on app exit)
-document.addEventListener('visibilitychange', () => {
-  // We keep the timer running but recalculate on return
-  // Actually per spec: pause when leaving app
-  // But for PWA, let's save state and adjust on return
-});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
