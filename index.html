@@ -91,45 +91,46 @@ input[type="range"]::-webkit-slider-thumb {
 /* Single flip digit card */
 .flip-digit {
   position: relative;
-  width: 68px; height: 96px;
+  width: 68px; height: 90px;
   perspective: 400px;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  overflow: hidden;
 }
 
-/* Static card — shown when not animating */
-.flip-digit .static {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-}
+/* The two halves */
 .flip-digit .top-half {
-  flex: 0 0 48px; overflow: hidden;
-  background: #282828;
+  position: absolute; top: 0; left: 0; right: 0; height: 45px;
+  overflow: hidden;
+  background: #2a2a2a;
   border-radius: 10px 10px 0 0;
-  border-bottom: 2px solid #111;
 }
 .flip-digit .bot-half {
-  flex: 0 0 48px; overflow: hidden;
-  background: #1e1e1e;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45px;
+  overflow: hidden;
+  background: #1f1f1f;
   border-radius: 0 0 10px 10px;
 }
-/* digit-num: sized so the number is centered across full 96px card height */
+
+/* digit-num: full card height, absolutely positioned so each half clips correctly */
 .flip-digit .digit-num {
-  display: block;
-  width: 100%; text-align: center;
-  font-size: 64px; font-weight: 800; color: #fff;
-  font-variant-numeric: tabular-nums; line-height: 96px;
-  letter-spacing: -3px;
+  position: absolute; left: 0; right: 0;
+  height: 90px; text-align: center;
+  font-size: 62px; font-weight: 800; color: #fff;
+  font-variant-numeric: tabular-nums; line-height: 90px;
+  letter-spacing: -2px;
   font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
   user-select: none;
 }
-/* Bot half shows bottom 48px — shift number up by 48px */
+/* Top half: digit positioned at top:0 → shows top 45px of the 90px number */
+.flip-digit .top-half .digit-num { top: 0; }
+/* Bot half: digit offset up by 45px → shows bottom 45px of the 90px number */
 .flip-digit .bot-half .digit-num,
-.flip-digit .lower-reveal .digit-num { margin-top: -48px; }
+.flip-digit .lower-reveal .digit-num { top: -45px; }
 
 /* Animated flap — top half folds down */
 .flip-digit .flap {
-  position: absolute; top: 0; left: 0; width: 100%; height: 48px;
+  position: absolute; top: 0; left: 0; width: 100%; height: 45px;
   transform-origin: bottom center;
   transform-style: preserve-3d;
   border-radius: 10px 10px 0 0;
@@ -146,7 +147,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Flap front (old number top half) */
 .flip-digit .flap-front {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: #282828;
+  background: #2a2a2a;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
   backface-visibility: hidden;
@@ -154,7 +155,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Flap back (new number top half) */
 .flip-digit .flap-back {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: #282828;
+  background: #2a2a2a;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
   transform: rotateX(180deg);
@@ -163,13 +164,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Lower reveal — new number bottom half */
 .flip-digit .lower-reveal {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 48px;
-  background: #1e1e1e;
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 45px;
+  background: #1f1f1f;
   border-radius: 0 0 10px 10px;
   overflow: hidden;
   clip-path: inset(100% 0 0 0);
   z-index: 5;
-}
 }
 .flip-digit .lower-reveal.animating {
   animation: revealBottom 0.35s ease-out 0.15s forwards;
@@ -182,7 +182,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Divider line across middle */
 .flip-digit::after {
   content: ''; position: absolute;
-  top: 48px; left: 0; right: 0; height: 2px;
+  top: 45px; left: 0; right: 0; height: 2px;
   background: #111; z-index: 20; pointer-events: none;
 }
 
@@ -605,10 +605,8 @@ function buildFlipClock() {
 function buildDigit(id) {
   return `
     <div class="flip-digit" id="${id}">
-      <div class="card static">
-        <div class="top-half"><span class="digit-num">0</span></div>
-        <div class="bot-half"><span class="digit-num">0</span></div>
-      </div>
+      <div class="top-half"><span class="digit-num">0</span></div>
+      <div class="bot-half"><span class="digit-num">0</span></div>
       <div class="flap">
         <div class="flap-front"><span class="digit-num">0</span></div>
         <div class="flap-back"><span class="digit-num">0</span></div>
