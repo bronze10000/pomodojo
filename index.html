@@ -106,27 +106,28 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 6px 20px rgba(0,0,0,0.6);
 }
 .flip-digit .static .top-half {
-  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  flex: 0 0 44px; overflow: hidden;
   background: var(--card-top);
   border-bottom: 1px solid rgba(0,0,0,0.5);
-  padding-bottom: 2px; border-radius: 10px 10px 0 0;
-  overflow: hidden;
+  border-radius: 10px 10px 0 0;
 }
 .flip-digit .static .bot-half {
-  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  flex: 0 0 44px; overflow: hidden;
   background: var(--card-bottom);
-  padding-top: 2px; border-radius: 0 0 10px 10px;
-  overflow: hidden;
+  border-radius: 0 0 10px 10px;
 }
+/* digit-num fills full card height via line-height, each half naturally clips its portion */
 .flip-digit .digit-num {
-  font-size: 62px; font-weight: 700; color: #fff;
-  font-variant-numeric: tabular-nums; line-height: 1;
+  display: block;
+  width: 100%; text-align: center;
+  font-size: 58px; font-weight: 700; color: #fff;
+  font-variant-numeric: tabular-nums; line-height: 88px;
   letter-spacing: -2px; font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
   user-select: none;
 }
-/* Clip top/bottom halves */
-.flip-digit .top-half .digit-num { transform: translateY(50%); }
-.flip-digit .bot-half .digit-num { transform: translateY(-50%); }
+/* Bot half: shift number up so we see the BOTTOM 44px of the 88px line-height number */
+.flip-digit .bot-half .digit-num,
+.flip-digit .lower-reveal .digit-num { margin-top: -44px; }
 
 /* Animated flap — top half folds down */
 .flip-digit .flap {
@@ -149,30 +150,28 @@ input[type="range"]::-webkit-slider-thumb {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: var(--card-top);
   border-radius: 10px 10px 0 0;
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: 2px; overflow: hidden;
+  overflow: hidden;
   backface-visibility: hidden;
 }
-/* Flap back (new number top half, revealed as card flips) */
+/* Flap back (new number top half) */
 .flip-digit .flap-back {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: var(--card-top);
   border-radius: 10px 10px 0 0;
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: 2px; overflow: hidden;
+  overflow: hidden;
   transform: rotateX(180deg);
   backface-visibility: hidden;
 }
 
-/* Lower reveal — new number bottom half slides in */
+/* Lower reveal — new number bottom half */
 .flip-digit .lower-reveal {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
   background: var(--card-bottom);
   border-radius: 0 0 10px 10px;
-  display: flex; align-items: flex-start; justify-content: center;
-  padding-top: 2px; overflow: hidden;
+  overflow: hidden;
   clip-path: inset(100% 0 0 0);
   z-index: 5;
+}
 }
 .flip-digit .lower-reveal.animating {
   animation: revealBottom 0.35s ease-out 0.15s forwards;
