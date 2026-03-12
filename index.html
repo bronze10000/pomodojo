@@ -91,47 +91,45 @@ input[type="range"]::-webkit-slider-thumb {
 /* Single flip digit card */
 .flip-digit {
   position: relative;
-  width: 64px; height: 88px;
-  perspective: 300px;
-}
-.flip-digit .card {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  border-radius: 10px; overflow: hidden;
+  width: 68px; height: 96px;
+  perspective: 400px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
 }
 
 /* Static card — shown when not animating */
 .flip-digit .static {
-  background: var(--card);
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   display: flex; flex-direction: column;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
 }
-.flip-digit .static .top-half {
-  flex: 0 0 44px; overflow: hidden;
-  background: var(--card-top);
-  border-bottom: 1px solid rgba(0,0,0,0.5);
+.flip-digit .top-half {
+  flex: 0 0 48px; overflow: hidden;
+  background: #282828;
   border-radius: 10px 10px 0 0;
+  border-bottom: 2px solid #111;
 }
-.flip-digit .static .bot-half {
-  flex: 0 0 44px; overflow: hidden;
-  background: var(--card-bottom);
+.flip-digit .bot-half {
+  flex: 0 0 48px; overflow: hidden;
+  background: #1e1e1e;
   border-radius: 0 0 10px 10px;
 }
-/* digit-num fills full card height via line-height, each half naturally clips its portion */
+/* digit-num: sized so the number is centered across full 96px card height */
 .flip-digit .digit-num {
   display: block;
   width: 100%; text-align: center;
-  font-size: 58px; font-weight: 700; color: #fff;
-  font-variant-numeric: tabular-nums; line-height: 88px;
-  letter-spacing: -2px; font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  font-size: 64px; font-weight: 800; color: #fff;
+  font-variant-numeric: tabular-nums; line-height: 96px;
+  letter-spacing: -3px;
+  font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
   user-select: none;
 }
-/* Bot half: shift number up so we see the BOTTOM 44px of the 88px line-height number */
+/* Bot half shows bottom 48px — shift number up by 48px */
 .flip-digit .bot-half .digit-num,
-.flip-digit .lower-reveal .digit-num { margin-top: -44px; }
+.flip-digit .lower-reveal .digit-num { margin-top: -48px; }
 
 /* Animated flap — top half folds down */
 .flip-digit .flap {
-  position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+  position: absolute; top: 0; left: 0; width: 100%; height: 48px;
   transform-origin: bottom center;
   transform-style: preserve-3d;
   border-radius: 10px 10px 0 0;
@@ -148,7 +146,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Flap front (old number top half) */
 .flip-digit .flap-front {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--card-top);
+  background: #282828;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
   backface-visibility: hidden;
@@ -156,7 +154,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* Flap back (new number top half) */
 .flip-digit .flap-back {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--card-top);
+  background: #282828;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
   transform: rotateX(180deg);
@@ -165,8 +163,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Lower reveal — new number bottom half */
 .flip-digit .lower-reveal {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
-  background: var(--card-bottom);
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 48px;
+  background: #1e1e1e;
   border-radius: 0 0 10px 10px;
   overflow: hidden;
   clip-path: inset(100% 0 0 0);
@@ -184,8 +182,8 @@ input[type="range"]::-webkit-slider-thumb {
 /* Divider line across middle */
 .flip-digit::after {
   content: ''; position: absolute;
-  top: 50%; left: 0; right: 0; height: 1px;
-  background: rgba(0,0,0,0.6); z-index: 20; pointer-events: none;
+  top: 48px; left: 0; right: 0; height: 2px;
+  background: #111; z-index: 20; pointer-events: none;
 }
 
 /* Mode label under clock */
