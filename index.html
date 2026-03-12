@@ -127,15 +127,17 @@ input[type="range"]::-webkit-slider-thumb {
 .flip-digit .bot-half .digit-num,
 .flip-digit .lower-reveal .digit-num { bottom: 0; }
 
-/* Animated flap — top half folds down */
+/* Animated flap — top half folds down, hidden when not animating */
 .flip-digit .flap {
   position: absolute; top: 0; left: 0; width: 100%; height: 45px;
   transform-origin: bottom center;
   transform-style: preserve-3d;
   border-radius: 10px 10px 0 0;
   z-index: 10;
+  visibility: hidden;
 }
 .flip-digit .flap.animating {
+  visibility: visible;
   animation: flipDown 0.35s ease-in forwards;
 }
 @keyframes flipDown {
@@ -537,24 +539,23 @@ function flipDigit(id, oldVal, newVal) {
   const flap = el.querySelector('.flap');
   if (!flap) return;
 
-  // Static halves show OLD value while flap animates
+  // Ensure static halves show old value
   if (topHalf) topHalf.textContent = oldVal;
   if (botHalf) botHalf.textContent = oldVal;
-  // Flap front also shows old (folds away)
+  // Flap front shows old value as it folds away
   if (flapFront) flapFront.textContent = oldVal;
 
-  // Trigger flap animation
+  // Trigger flap animation (flap becomes visible via CSS)
   flap.classList.remove('animating');
   void flap.offsetWidth;
   flap.classList.add('animating');
 
-  // When flap finishes folding: snap both halves AND flap to new value
+  // After flap folds away: snap both static halves to new value, hide flap
   setTimeout(() => {
     if (topHalf) topHalf.textContent = newVal;
     if (botHalf) botHalf.textContent = newVal;
-    if (flapFront) flapFront.textContent = newVal;
-    flap.classList.remove('animating');
-  }, 360);
+    flap.classList.remove('animating'); // hides flap again via CSS
+  }, 370);
 }
 
 function buildFlipClock() {
