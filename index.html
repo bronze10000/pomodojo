@@ -548,10 +548,11 @@ function flipDigit(id, oldVal, newVal) {
   void flap.offsetWidth;
   flap.classList.add('animating');
 
-  // When flap finishes folding: snap both halves to new value
+  // When flap finishes folding: snap both halves AND flap to new value
   setTimeout(() => {
     if (topHalf) topHalf.textContent = newVal;
     if (botHalf) botHalf.textContent = newVal;
+    if (flapFront) flapFront.textContent = newVal;
     flap.classList.remove('animating');
   }, 360);
 }
