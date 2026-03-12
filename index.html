@@ -161,21 +161,14 @@ input[type="range"]::-webkit-slider-thumb {
   backface-visibility: hidden;
 }
 
-/* Lower reveal — new number bottom half */
+/* Lower reveal — hidden by default, snaps in when flap finishes */
 .flip-digit .lower-reveal {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 45px;
   background: #252525;
   border-radius: 0 0 10px 10px;
   overflow: hidden;
-  clip-path: inset(100% 0 0 0);
+  display: none;
   z-index: 5;
-}
-.flip-digit .lower-reveal.animating {
-  animation: revealBottom 0.3s ease-out 0.35s forwards;
-}
-@keyframes revealBottom {
-  0%   { clip-path: inset(100% 0 0 0); }
-  100% { clip-path: inset(0% 0 0 0); }
 }
 
 /* No pseudo-element divider — margin-top on bot-half creates the gap */
@@ -541,42 +534,26 @@ function flipDigit(id, oldVal, newVal) {
   const topHalf = el.querySelector('.top-half .digit-num');
   const botHalf = el.querySelector('.bot-half .digit-num');
   const flapFront = el.querySelector('.flap-front .digit-num');
-  const flapBack = el.querySelector('.flap-back .digit-num');
-  const lowerReveal = el.querySelector('.lower-reveal .digit-num');
+  const flap = el.querySelector('.flap');
+  if (!flap) return;
 
-  // Both static halves keep showing OLD value during animation
+  // Static halves show OLD value while flap animates
   if (topHalf) topHalf.textContent = oldVal;
   if (botHalf) botHalf.textContent = oldVal;
-
-  // Flap front shows old top half (animates away)
+  // Flap front also shows old (folds away)
   if (flapFront) flapFront.textContent = oldVal;
-  // Flap back shows new top half (revealed as flap falls)
-  if (flapBack) flapBack.textContent = newVal;
-  // Lower reveal shows new bottom half (clips in over old bottom)
-  if (lowerReveal) lowerReveal.textContent = newVal;
 
-  const flap = el.querySelector('.flap');
-  const lower = el.querySelector('.lower-reveal');
-  if (!flap || !lower) return;
-
+  // Trigger flap animation
   flap.classList.remove('animating');
-  lower.classList.remove('animating');
-  void flap.offsetWidth; // force reflow
+  void flap.offsetWidth;
   flap.classList.add('animating');
-  lower.classList.add('animating');
 
-  // At 350ms (when flap fully folded): update top-half to new value
-  // This happens right as lower-reveal starts animating in
+  // When flap finishes folding: snap both halves to new value
   setTimeout(() => {
     if (topHalf) topHalf.textContent = newVal;
-  }, 350);
-
-  // At 700ms (after lower-reveal finishes): update bot-half and clean up
-  setTimeout(() => {
     if (botHalf) botHalf.textContent = newVal;
     flap.classList.remove('animating');
-    lower.classList.remove('animating');
-  }, 700);
+  }, 360);
 }
 
 function buildFlipClock() {
