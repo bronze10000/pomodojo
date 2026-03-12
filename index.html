@@ -565,9 +565,14 @@ function flipDigit(id, oldVal, newVal) {
   flap.classList.add('animating');
   lower.classList.add('animating');
 
-  // After animation, update both static halves to new value
+  // At 350ms (when flap fully folded): update top-half to new value
+  // This happens right as lower-reveal starts animating in
   setTimeout(() => {
     if (topHalf) topHalf.textContent = newVal;
+  }, 350);
+
+  // At 700ms (after lower-reveal finishes): update bot-half and clean up
+  setTimeout(() => {
     if (botHalf) botHalf.textContent = newVal;
     flap.classList.remove('animating');
     lower.classList.remove('animating');
