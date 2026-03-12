@@ -17,6 +17,7 @@
   --primary: var(--focus); --accent: var(--focus-accent); --mode-bg: var(--focus-bg); --glow: var(--focus-glow);
   --bg: #0D0D0D; --surface: rgba(255,255,255,0.04); --surface2: rgba(255,255,255,0.06);
   --text: #F5F0EB; --text-dim: rgba(245,240,235,0.4); --text-dimmer: rgba(245,240,235,0.25);
+  --card: #1C1C1C; --card-top: #222222; --card-bottom: #181818;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; overflow: hidden; }
@@ -59,6 +60,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .streak-banner { width: 100%; padding: 0 24px; display: flex; align-items: center; gap: 4px; }
 .streak-banner span { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
+
 .mode-selector {
   display: flex; gap: 4px; margin-top: 12px;
   background: var(--surface); border-radius: 14px; padding: 4px;
@@ -69,32 +71,146 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .mode-btn.active { background: var(--primary); color: #fff; }
 
-/* Timer ring */
-.timer-container { position: relative; margin: 28px 0 16px; }
-.timer-glow {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 200px; height: 200px; border-radius: 50%;
-  background: var(--glow); filter: blur(60px);
-  opacity: 0.15; transition: opacity 0.8s;
+/* ===================== FLIP CLOCK ===================== */
+.flip-clock-wrap {
+  margin: 32px 0 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
-.timer-glow.running { opacity: 0.45; }
-.timer-display {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  text-align: center;
+.flip-clock {
+  display: flex; align-items: center; gap: 6px;
 }
-.timer-time {
-  font-size: 60px; font-weight: 200; letter-spacing: 2px;
+.flip-colon {
+  font-size: 52px; font-weight: 700; color: rgba(255,255,255,0.5);
+  line-height: 1; margin: 0 2px; margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.flip-unit {
+  display: flex; gap: 5px;
+}
+
+/* Single flip digit card */
+.flip-digit {
+  position: relative;
+  width: 64px; height: 88px;
+  perspective: 300px;
+}
+.flip-digit .card {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 10px; overflow: hidden;
+}
+
+/* Static card — shown when not animating */
+.flip-digit .static {
+  background: var(--card);
+  display: flex; flex-direction: column;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+.flip-digit .static .top-half {
+  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  background: var(--card-top);
+  border-bottom: 1px solid rgba(0,0,0,0.5);
+  padding-bottom: 2px; border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+.flip-digit .static .bot-half {
+  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  background: var(--card-bottom);
+  padding-top: 2px; border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+.flip-digit .digit-num {
+  font-size: 62px; font-weight: 700; color: #fff;
   font-variant-numeric: tabular-nums; line-height: 1;
+  letter-spacing: -2px; font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  user-select: none;
 }
-.timer-time.overtime { color: var(--accent); }
-.timer-label {
+/* Clip top/bottom halves */
+.flip-digit .top-half .digit-num { transform: translateY(50%); }
+.flip-digit .bot-half .digit-num { transform: translateY(-50%); }
+
+/* Animated flap — top half folds down */
+.flip-digit .flap {
+  position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+  transform-origin: bottom center;
+  transform-style: preserve-3d;
+  border-radius: 10px 10px 0 0;
+  z-index: 10;
+}
+.flip-digit .flap.animating {
+  animation: flipDown 0.35s ease-in forwards;
+}
+@keyframes flipDown {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-90deg); }
+}
+
+/* Flap front (old number top half) */
+.flip-digit .flap-front {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--card-top);
+  border-radius: 10px 10px 0 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 2px; overflow: hidden;
+  backface-visibility: hidden;
+}
+/* Flap back (new number top half, revealed as card flips) */
+.flip-digit .flap-back {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--card-top);
+  border-radius: 10px 10px 0 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 2px; overflow: hidden;
+  transform: rotateX(180deg);
+  backface-visibility: hidden;
+}
+
+/* Lower reveal — new number bottom half slides in */
+.flip-digit .lower-reveal {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+  background: var(--card-bottom);
+  border-radius: 0 0 10px 10px;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 2px; overflow: hidden;
+  clip-path: inset(100% 0 0 0);
+  z-index: 5;
+}
+.flip-digit .lower-reveal.animating {
+  animation: revealBottom 0.35s ease-out 0.15s forwards;
+}
+@keyframes revealBottom {
+  0%   { clip-path: inset(100% 0 0 0); }
+  100% { clip-path: inset(0% 0 0 0); }
+}
+
+/* Divider line across middle */
+.flip-digit::after {
+  content: ''; position: absolute;
+  top: 50%; left: 0; right: 0; height: 1px;
+  background: rgba(0,0,0,0.6); z-index: 20; pointer-events: none;
+}
+
+/* Mode label under clock */
+.flip-mode-label {
   font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 4px; color: var(--text-dim); margin-top: 10px;
+  letter-spacing: 4px; color: var(--text-dim);
 }
-.controls { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
+.flip-mode-label.overtime { color: var(--accent); }
+
+/* Glow under clock */
+.flip-glow {
+  position: absolute;
+  width: 260px; height: 40px;
+  background: var(--glow); filter: blur(40px);
+  opacity: 0; transition: opacity 0.8s; pointer-events: none;
+  margin-top: -20px;
+}
+.flip-glow.running { opacity: 0.6; }
+
+/* Controls */
+.controls { display: flex; gap: 16px; align-items: center; margin-top: 16px; }
 .ctrl-btn {
   width: 50px; height: 50px; border-radius: 50%; display: flex;
-  align-items: center; justify-content: center; font-size: 18px;
+  align-items: center; justify-content: center;
   background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
   color: rgba(245,240,235,0.5); transition: transform 0.15s;
 }
@@ -106,10 +222,14 @@ input[type="range"]::-webkit-slider-thumb {
   color: #fff; box-shadow: 0 8px 32px var(--glow); transition: transform 0.15s;
 }
 .main-btn:active { transform: scale(0.92); }
+
+/* Session dots */
 .session-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: background 0.3s; }
 .dot.filled { background: var(--primary); }
 .today-count { font-size: 12px; color: var(--text-dimmer); margin-top: 10px; }
+
+/* Goal bar */
 .goal-bar { width: 100%; max-width: 300px; margin-top: 16px; padding: 0 40px; }
 .goal-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .goal-header span { font-size: 11px; font-weight: 500; }
@@ -166,7 +286,7 @@ input[type="range"]::-webkit-slider-thumb {
   display: flex; align-items: center; justify-content: center;
   writing-mode: vertical-lr; transform: rotate(180deg);
   font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.9);
-  letter-spacing: 0.5px; pointer-events: none; padding: 4px 0;
+  pointer-events: none; padding: 4px 0;
 }
 .week-day-label { font-size: 11px; color: var(--text-dimmer); }
 .week-day-label.today { color: rgba(255,255,255,0.8); font-weight: 600; }
@@ -306,10 +426,9 @@ let sessionComplete = false;
 let overtimeSeconds = 0;
 let completedSessions = 0;
 let timerInterval = null;
-// Wall-clock anchors
-let timerStartWall = null;    // wall ms when timer last (re)started
-let timerStartRemain = null;  // timeRemaining at that moment
-let sessionEndWall = null;    // wall ms when focus hit 00:00
+let timerStartWall = null;
+let timerStartRemain = null;
+let sessionEndWall = null;
 
 function saveTimerState() {
   try {
@@ -340,11 +459,10 @@ function loadTimerState() {
 
     if (s.isRunning && gap > 0) {
       if (s.sessionComplete) {
-        // Was tracking overtime while away
-        overtimeSeconds = (s.overtimeSeconds || 0) + gap;
+        overtimeSeconds = Math.min(600, (s.overtimeSeconds || 0) + gap);
         timeRemaining = 0;
+        if (overtimeSeconds >= 600) { sessionComplete = false; overtimeSeconds = 0; }
       } else {
-        // Was counting down
         const newRemain = Math.max(0, (s.timeRemaining || 0) - gap);
         timeRemaining = newRemain;
         overtimeSeconds = 0;
@@ -352,14 +470,13 @@ function loadTimerState() {
           sessionComplete = true;
           const crossedZeroAt = now - ((gap - (s.timeRemaining||0)) * 1000);
           sessionEndWall = crossedZeroAt;
-          overtimeSeconds = Math.max(0, Math.floor((now - crossedZeroAt) / 1000));
+          overtimeSeconds = Math.min(600, Math.max(0, Math.floor((now - crossedZeroAt) / 1000)));
         }
       }
     } else {
       timeRemaining = s.timeRemaining || scheduledDuration;
       overtimeSeconds = s.overtimeSeconds || 0;
     }
-    // Always restore paused so user can see where they left off
     isRunning = false;
   } catch(e) {
     setDuration('focus');
@@ -398,14 +515,132 @@ function formatTime(sec) {
 }
 
 // ============================================================
-// TICK — wall-clock compensated
+// FLIP CLOCK ENGINE
+// ============================================================
+// Track displayed digits to only animate on change
+let displayedDigits = ['_','_','_','_'];
+
+function getDigits(totalSec) {
+  const sec = Math.abs(totalSec);
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return [
+    String(Math.floor(m / 10) % 10),
+    String(m % 10),
+    String(Math.floor(s / 10)),
+    String(s % 10)
+  ];
+}
+
+function updateFlipClock(totalSec) {
+  const digits = getDigits(totalSec);
+  const ids = ['d0','d1','d2','d3'];
+  digits.forEach((digit, i) => {
+    if (digit !== displayedDigits[i]) {
+      flipDigit(ids[i], displayedDigits[i], digit);
+      displayedDigits[i] = digit;
+    }
+  });
+}
+
+function flipDigit(id, oldVal, newVal) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  // Update the static bottom half immediately to new value
+  const botHalf = el.querySelector('.bot-half .digit-num');
+  if (botHalf) botHalf.textContent = newVal;
+
+  // Set flap front to old value
+  const flapFront = el.querySelector('.flap-front .digit-num');
+  if (flapFront) flapFront.textContent = oldVal;
+
+  // Set flap back and lower reveal to new value
+  const flapBack = el.querySelector('.flap-back .digit-num');
+  if (flapBack) flapBack.textContent = newVal;
+
+  const lowerReveal = el.querySelector('.lower-reveal .digit-num');
+  if (lowerReveal) lowerReveal.textContent = newVal;
+
+  // Update static top half after animation
+  const topHalf = el.querySelector('.top-half .digit-num');
+
+  // Trigger animation
+  const flap = el.querySelector('.flap');
+  const lower = el.querySelector('.lower-reveal');
+  if (!flap || !lower) return;
+
+  flap.classList.remove('animating');
+  lower.classList.remove('animating');
+  void flap.offsetWidth; // reflow
+  flap.classList.add('animating');
+  lower.classList.add('animating');
+
+  setTimeout(() => {
+    if (topHalf) topHalf.textContent = newVal;
+    flap.classList.remove('animating');
+    lower.classList.remove('animating');
+    // Reset flap to top position
+  }, 400);
+}
+
+function buildFlipClock() {
+  return `
+    <div class="flip-clock-wrap">
+      <div class="flip-clock">
+        <div class="flip-unit">
+          ${buildDigit('d0')}
+          ${buildDigit('d1')}
+        </div>
+        <div class="flip-colon">:</div>
+        <div class="flip-unit">
+          ${buildDigit('d2')}
+          ${buildDigit('d3')}
+        </div>
+      </div>
+      <div class="flip-mode-label ${sessionComplete?'overtime':''}" id="flipLabel">
+        ${sessionComplete ? 'Overtime' : (mode==='focus'?'Focus':mode==='shortBreak'?'Break':'Long Break')}
+      </div>
+    </div>
+  `;
+}
+
+function buildDigit(id) {
+  return `
+    <div class="flip-digit" id="${id}">
+      <div class="card static">
+        <div class="top-half"><span class="digit-num">0</span></div>
+        <div class="bot-half"><span class="digit-num">0</span></div>
+      </div>
+      <div class="flap">
+        <div class="flap-front"><span class="digit-num">0</span></div>
+        <div class="flap-back"><span class="digit-num">0</span></div>
+      </div>
+      <div class="lower-reveal"><span class="digit-num">0</span></div>
+    </div>
+  `;
+}
+
+function initFlipDisplay(totalSec) {
+  const digits = getDigits(totalSec);
+  displayedDigits = ['_','_','_','_']; // force update all
+  const ids = ['d0','d1','d2','d3'];
+  digits.forEach((digit, i) => {
+    const el = document.getElementById(ids[i]);
+    if (!el) return;
+    el.querySelectorAll('.digit-num').forEach(n => n.textContent = digit);
+    displayedDigits[i] = digit;
+  });
+}
+
+// ============================================================
+// TICK
 // ============================================================
 function tick() {
   const now = Date.now();
 
   if (mode === 'focus') {
     if (!sessionComplete) {
-      // Compensate using wall clock
       if (timerStartWall !== null) {
         const elapsed = Math.floor((now - timerStartWall) / 1000);
         timeRemaining = Math.max(0, timerStartRemain - elapsed);
@@ -421,7 +656,6 @@ function tick() {
         showSessionCompleteOverlay();
       }
     } else {
-      // Overtime — count up from when session ended, cap at 10 minutes
       overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
       if (overtimeSeconds >= 600) {
         endFocusSession();
@@ -429,7 +663,6 @@ function tick() {
       }
     }
   } else {
-    // Break countdown
     if (timerStartWall !== null) {
       const elapsed = Math.floor((now - timerStartWall) / 1000);
       timeRemaining = Math.max(0, timerStartRemain - elapsed);
@@ -443,8 +676,20 @@ function tick() {
       return;
     }
   }
+
   saveTimerState();
-  renderTimer();
+  // Update flip clock display
+  const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
+  updateFlipClock(displaySec);
+  // Update label
+  const label = document.getElementById('flipLabel');
+  if (label) {
+    label.textContent = sessionComplete ? 'Overtime' : (mode==='focus'?'Focus':mode==='shortBreak'?'Break':'Long Break');
+    label.className = 'flip-mode-label' + (sessionComplete ? ' overtime' : '');
+  }
+  // Update glow
+  const glow = document.getElementById('flipGlow');
+  if (glow) glow.className = 'flip-glow' + (isRunning ? ' running' : '');
 }
 
 function startTimer() {
@@ -455,7 +700,9 @@ function startTimer() {
   if (sessionComplete && !sessionEndWall) sessionEndWall = Date.now();
   timerInterval = setInterval(tick, 1000);
   saveTimerState();
-  renderTimer();
+  updateMainBtn();
+  const glow = document.getElementById('flipGlow');
+  if (glow) glow.className = 'flip-glow running';
 }
 
 function stopTimer() {
@@ -466,7 +713,7 @@ function stopTimer() {
   timerStartRemain = null;
 }
 
-function pauseTimer() { stopTimer(); saveTimerState(); renderTimer(); }
+function pauseTimer() { stopTimer(); saveTimerState(); updateMainBtn(); }
 function toggleTimer() { if (isRunning) pauseTimer(); else startTimer(); }
 
 function resetTimer() {
@@ -502,8 +749,22 @@ function skipToNext() {
   } else switchMode('focus');
 }
 
+function updateMainBtn() {
+  const btn = document.getElementById('mainBtn');
+  if (!btn) return;
+  if (mode === 'focus' && sessionComplete) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>';
+    btn.onclick = endFocusSession;
+  } else {
+    btn.innerHTML = isRunning
+      ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
+      : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    btn.onclick = toggleTimer;
+  }
+}
+
 // ============================================================
-// VISIBILITY — correct on app return
+// VISIBILITY
 // ============================================================
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
@@ -515,15 +776,17 @@ document.addEventListener('visibilitychange', () => {
         if (timeRemaining === 0) {
           sessionComplete = true;
           sessionEndWall = timerStartWall + (timerStartRemain * 1000);
-          overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
+          overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000));
           sendNotification();
           showSessionCompleteOverlay();
         }
       } else if (sessionComplete && sessionEndWall) {
-        overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
+        overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000));
       }
       saveTimerState();
-      renderTimer();
+      // Refresh display
+      const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
+      updateFlipClock(displaySec);
     }
   } else {
     saveTimerState();
@@ -614,65 +877,48 @@ function switchTab(tab) {
 function renderTimer() {
   if (currentTab !== 'timer') return;
   const tc = document.getElementById('tabContent');
-  const progress = sessionComplete ? 1 : (scheduledDuration > 0 ? 1 - timeRemaining / scheduledDuration : 0);
-  const circumference = 2 * Math.PI * 130;
-  const offset = circumference * (1 - progress);
   const streak = calcStreak();
   const tc2 = todayCount();
   const goalProg = Math.min(1, tc2 / Math.max(1, data.settings.dailyGoal));
   const goalMet = tc2 >= data.settings.dailyGoal;
   const dotCount = data.settings.sessionsBeforeLongBreak;
   const filledDots = completedSessions % dotCount;
-  const modeLabels = { focus:'Focus', shortBreak:'Break', longBreak:'Long Break' };
-  const angle = 2 * Math.PI * progress - Math.PI / 2;
-  const dotX = 145 + 130 * Math.cos(angle);
-  const dotY = 145 + 130 * Math.sin(angle);
 
-  let mainBtnIcon, mainBtnAction;
-  if (mode === 'focus' && sessionComplete) { mainBtnIcon = '⏹'; mainBtnAction = 'endFocusSession()'; }
-  else { mainBtnIcon = isRunning ? '❚❚' : '▶'; mainBtnAction = 'toggleTimer()'; }
-
-  const displayTime = sessionComplete ? '+' + formatTime(overtimeSeconds) : formatTime(timeRemaining);
-  const displayLabel = sessionComplete ? 'Overtime' : modeLabels[mode];
+  const mainIcon = (mode === 'focus' && sessionComplete)
+    ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>'
+    : isRunning
+      ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
+      : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const mainAction = (mode === 'focus' && sessionComplete) ? 'endFocusSession()' : 'toggleTimer()';
 
   tc.innerHTML = `
     <div class="timer-screen">
       <div class="streak-banner">${streak > 0 ? `<span>🔥</span><span>${streak} day streak</span>` : ''}</div>
+
       <div class="mode-selector">
         <button class="mode-btn ${mode==='focus'?'active':''}" onclick="switchMode('focus')">Focus</button>
         <button class="mode-btn ${mode==='shortBreak'?'active':''}" onclick="switchMode('shortBreak')">Break</button>
         <button class="mode-btn ${mode==='longBreak'?'active':''}" onclick="switchMode('longBreak')">Long Break</button>
       </div>
-      <div class="timer-container">
-        <div class="timer-glow ${isRunning?'running':''}"></div>
-        <svg width="290" height="290" viewBox="0 0 290 290">
-          <circle cx="145" cy="145" r="130" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
-          <circle cx="145" cy="145" r="130" fill="none" stroke="url(#grad)" stroke-width="6"
-            stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
-            transform="rotate(-90 145 145)" style="transition:stroke-dashoffset 1s linear"/>
-          ${progress > 0 ? `<circle cx="${dotX}" cy="${dotY}" r="4" fill="#fff" filter="url(#dotGlow)"/>` : ''}
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:var(--primary)"/>
-              <stop offset="100%" style="stop-color:var(--accent)"/>
-            </linearGradient>
-            <filter id="dotGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          </defs>
-        </svg>
-        <div class="timer-display">
-          <div class="timer-time ${sessionComplete?'overtime':''}">${displayTime}</div>
-          <div class="timer-label">${displayLabel}</div>
-        </div>
-      </div>
+
+      ${buildFlipClock()}
+      <div class="flip-glow ${isRunning?'running':''}" id="flipGlow"></div>
+
       <div class="controls">
-        <button class="ctrl-btn" onclick="resetTimer()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg></button>
-        <button class="main-btn" onclick="${mainBtnAction}">${mainBtnIcon}</button>
-        <button class="ctrl-btn" onclick="skipToNext()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm8.5-6l.5.35V6h2v12h-2V11.65z"/></svg></button>
+        <button class="ctrl-btn" onclick="resetTimer()">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+        </button>
+        <button class="main-btn" id="mainBtn" onclick="${mainAction}">${mainIcon}</button>
+        <button class="ctrl-btn" onclick="skipToNext()">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm8.5-6l.5.35V6h2v12h-2V11.65z"/></svg>
+        </button>
       </div>
+
       <div class="session-dots">
         ${Array.from({length:dotCount},(_,i)=>`<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}
       </div>
       <div class="today-count">${tc2} session${tc2===1?'':'s'} today</div>
+
       <div class="goal-bar">
         <div class="goal-header">
           <span style="color:var(--text-dim)">Daily Goal</span>
@@ -681,6 +927,10 @@ function renderTimer() {
         <div class="goal-track"><div class="goal-fill" style="width:${goalProg*100}%"></div></div>
       </div>
     </div>`;
+
+  // Init flip display with current time
+  const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
+  initFlipDisplay(displaySec);
 }
 
 // ---- STATS ----
@@ -722,14 +972,11 @@ function renderWeekly() {
     days.push({ mins, dayName: d.toLocaleDateString('en-US',{weekday:'short'}), isToday: i===0, hasData: mins>0 });
   }
   const maxMins = Math.max(1, ...days.map(d => d.mins));
-
   container.innerHTML = `
     <div class="week-chart">
       ${days.map(d => {
         const h = Math.max(4, (d.mins / maxMins) * 130);
-        const label = d.mins >= 60
-          ? Math.floor(d.mins/60) + 'h' + (d.mins%60>0 ? (d.mins%60)+'m' : '')
-          : (d.mins > 0 ? d.mins+'m' : '');
+        const label = d.mins >= 60 ? Math.floor(d.mins/60)+'h'+(d.mins%60>0?(d.mins%60)+'m':'') : (d.mins>0?d.mins+'m':'');
         const showLabel = d.mins > 0 && h >= 26;
         return `<div class="week-bar-col">
           <div class="week-bar ${d.hasData?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px">
@@ -749,7 +996,6 @@ function renderMonthly() {
   const firstDay = new Date(year,month,1).getDay();
   const daysInMonth = new Date(year,month+1,0).getDate();
   const todayDk = dateKey();
-
   let cells = '';
   for (let i = 0; i < firstDay; i++) cells += '<div class="heatmap-cell" style="background:transparent"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
@@ -762,7 +1008,6 @@ function renderMonthly() {
     const click = count>0 ? `onclick="selectedHeatmapDay=selectedHeatmapDay==='${dk}'?null:'${dk}';renderStats()"` : '';
     cells += `<div class="heatmap-cell ${cls}" ${click}>${d}</div>`;
   }
-
   let selectedInfo = '';
   if (selectedHeatmapDay) {
     const sc = sessionsForDate(selectedHeatmapDay);
@@ -773,7 +1018,6 @@ function renderMonthly() {
       selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'} · ${mins}m</span></div>`;
     }
   }
-
   container.innerHTML = `
     <div class="month-title">${monthName}</div>
     <div class="heatmap-headers">${['S','M','T','W','T','F','S'].map(h=>`<span>${h}</span>`).join('')}</div>
@@ -815,7 +1059,6 @@ function renderSummaryCards() {
 
 // ---- SETTINGS ----
 let tempSettings = { ...data.settings };
-
 function renderSettings() {
   if (currentTab !== 'settings') return;
   tempSettings = { ...data.settings };
@@ -837,7 +1080,6 @@ function renderSettings() {
       <div class="about"><div class="name">Pomodojo</div><div class="tagline">Focus. Rest. Repeat.</div></div>
     </div>`;
 }
-
 function settingSlider(key, label, unit, min, max, color) {
   const val = tempSettings[key];
   return `<div class="setting-item">
@@ -849,7 +1091,6 @@ function settingSlider(key, label, unit, min, max, color) {
       oninput="tempSettings['${key}']=parseInt(this.value);document.getElementById('val_${key}').textContent=this.value+'${unit?' '+unit:''}'">
   </div>`;
 }
-
 function saveSettings() {
   data.settings = { ...tempSettings };
   saveData(data);
