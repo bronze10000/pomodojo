@@ -21,230 +21,65 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; overflow: hidden; }
-body {
-  font-family: -apple-system, 'SF Pro Display', BlinkMacSystemFont, system-ui, sans-serif;
-  background: var(--bg); color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.6s ease;
-}
+body { font-family: -apple-system, 'SF Pro Display', BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; transition: background 0.6s ease; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-input[type="range"] {
-  -webkit-appearance: none; width: 100%; height: 4px;
-  background: rgba(255,255,255,0.08); border-radius: 4px; outline: none;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--primary); cursor: pointer; border: 3px solid #1a1a1a;
-}
+input[type="range"] { -webkit-appearance: none; width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 3px solid #1a1a1a; }
 #app { height: 100dvh; display: flex; flex-direction: column; }
 .tab-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
-.tab-bar {
-  display: flex; border-top: 1px solid rgba(255,255,255,0.06);
-  background: rgba(15,15,15,0.95); backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px); padding-bottom: env(safe-area-inset-bottom);
-}
-.tab-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 10px 0 6px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35);
-  transition: color 0.3s;
-}
+.tab-bar { display: flex; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(15,15,15,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding-bottom: env(safe-area-inset-bottom); }
+.tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0 6px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35); transition: color 0.3s; }
 .tab-btn.active { color: var(--primary); }
 .tab-btn svg { width: 22px; height: 22px; fill: currentColor; }
-
-/* Timer screen */
-.timer-screen {
-  display: flex; flex-direction: column; align-items: center;
-  padding: calc(env(safe-area-inset-top, 20px) + 12px) 0 20px; min-height: 100%;
-  background: linear-gradient(170deg, var(--mode-bg) 0%, #0D0D0D 50%, #111 100%);
-  transition: background 0.8s ease;
-}
+.timer-screen { display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: calc(env(safe-area-inset-top, 20px) + 8px) 0 16px; min-height: 100%; background: linear-gradient(170deg, var(--mode-bg) 0%, #0D0D0D 50%, #111 100%); transition: background 0.8s ease; }
 .streak-banner { width: 100%; padding: 0 24px; display: flex; align-items: center; gap: 4px; }
 .streak-banner span { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
-
-.mode-selector {
-  display: flex; gap: 4px; margin-top: 12px;
-  background: var(--surface); border-radius: 14px; padding: 4px;
-}
-.mode-btn {
-  padding: 8px 18px; border-radius: 11px; font-size: 13px; font-weight: 600;
-  color: rgba(245,240,235,0.4); transition: all 0.3s;
-}
+.mode-selector { display: flex; gap: 4px; margin-top: 12px; background: var(--surface); border-radius: 14px; padding: 4px; }
+.mode-btn { padding: 8px 18px; border-radius: 11px; font-size: 13px; font-weight: 600; color: rgba(245,240,235,0.4); transition: all 0.3s; }
 .mode-btn.active { background: var(--primary); color: #fff; }
-
 /* ===================== FLIP CLOCK ===================== */
-.flip-clock-wrap {
-  margin: 32px 0 8px;
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
-.flip-clock {
-  display: flex; align-items: center; gap: 6px;
-}
-.flip-colon {
-  font-size: 52px; font-weight: 700; color: rgba(255,255,255,0.5);
-  line-height: 1; margin: 0 2px; margin-bottom: 8px;
-  font-variant-numeric: tabular-nums;
-}
-.flip-unit {
-  display: flex; gap: 5px;
-}
-
-/* Single flip digit card */
-.flip-digit {
-  position: relative;
-  width: 68px; height: 90px;
-  perspective: 400px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
-  overflow: hidden;
-}
-
-/* The two halves */
-.flip-digit .top-half {
-  position: relative; height: 45px; overflow: hidden;
-  background: #252525;
-  border-radius: 10px 10px 0 0;
-}
-.flip-digit .bot-half {
-  position: relative; height: 45px; overflow: hidden;
-  background: #252525;
-  border-radius: 0 0 10px 10px;
-  margin-top: 2px;
-}
-
-/* digit-num: 90px tall, absolutely placed in each half */
-.flip-digit .digit-num {
-  position: absolute; left: 0; right: 0; height: 90px;
-  text-align: center;
-  font-size: 62px; font-weight: 800; color: #fff;
-  font-variant-numeric: tabular-nums; line-height: 90px;
-  letter-spacing: -2px;
-  font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
-  user-select: none;
-}
-/* Top half: show top 45px → anchor digit to top */
+.flip-clock-wrap { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.flip-clock { display: flex; align-items: center; gap: 8px; }
+.flip-colon { font-size: 62px; font-weight: 700; color: rgba(255,255,255,0.5); line-height: 1; margin: 0 2px; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+.flip-unit { display: flex; gap: 6px; }
+.flip-digit { position: relative; width: 82px; height: 108px; perspective: 480px; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); overflow: hidden; }
+.flip-digit .top-half { position: relative; height: 54px; overflow: hidden; background: #252525; border-radius: 10px 10px 0 0; }
+.flip-digit .bot-half { position: relative; height: 54px; overflow: hidden; background: #252525; border-radius: 0 0 10px 10px; margin-top: 2px; }
+.flip-digit .digit-num { position: absolute; left: 0; right: 0; height: 108px; text-align: center; font-size: 76px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; line-height: 108px; letter-spacing: -2px; font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif; user-select: none; }
 .flip-digit .top-half .digit-num { top: 0; }
-/* Bot half: show bottom 45px → anchor digit to bottom */
-.flip-digit .bot-half .digit-num,
-.flip-digit .lower-reveal .digit-num { bottom: 0; }
-
-/* Animated flap — top half folds down, hidden when not animating */
-.flip-digit .flap {
-  position: absolute; top: 0; left: 0; width: 100%; height: 45px;
-  transform-origin: bottom center;
-  transform-style: preserve-3d;
-  border-radius: 10px 10px 0 0;
-  z-index: 10;
-  visibility: hidden;
-}
-.flip-digit .flap.animating {
-  visibility: visible;
-  animation: flipDown 0.35s ease-in forwards;
-}
-@keyframes flipDown {
-  0%   { transform: rotateX(0deg); }
-  100% { transform: rotateX(-90deg); }
-}
-
-/* Flap front (old number top half) */
-.flip-digit .flap-front {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: #252525;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
-  backface-visibility: hidden;
-}
-/* Flap back (new number top half) */
-.flip-digit .flap-back {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: #252525;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
-  transform: rotateX(180deg);
-  backface-visibility: hidden;
-}
-
-/* Lower reveal — hidden by default, snaps in when flap finishes */
-.flip-digit .lower-reveal {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 45px;
-  background: #252525;
-  border-radius: 0 0 10px 10px;
-  overflow: hidden;
-  display: none;
-  z-index: 5;
-}
-
-/* No pseudo-element divider — margin-top on bot-half creates the gap */
-
-/* Mode label under clock */
-.flip-mode-label {
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 4px; color: var(--text-dim);
-}
+.flip-digit .bot-half .digit-num, .flip-digit .lower-reveal .digit-num { bottom: 0; }
+.flip-digit .flap { position: absolute; top: 0; left: 0; width: 100%; height: 54px; transform-origin: bottom center; transform-style: preserve-3d; border-radius: 10px 10px 0 0; z-index: 10; visibility: hidden; }
+.flip-digit .flap.animating { visibility: visible; animation: flipDown 0.35s ease-in forwards; }
+@keyframes flipDown { 0% { transform: rotateX(0deg); } 100% { transform: rotateX(-90deg); } }
+.flip-digit .flap-front { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #252525; border-radius: 10px 10px 0 0; overflow: hidden; backface-visibility: hidden; }
+.flip-digit .flap-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #252525; border-radius: 10px 10px 0 0; overflow: hidden; transform: rotateX(180deg); backface-visibility: hidden; }
+.flip-digit .lower-reveal { position: absolute; bottom: 0; left: 0; width: 100%; height: 54px; background: #252525; border-radius: 0 0 10px 10px; overflow: hidden; display: none; z-index: 5; }
+.flip-mode-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 4px; color: var(--text-dim); }
 .flip-mode-label.overtime { color: var(--accent); }
-
-/* Glow under clock */
-.flip-glow {
-  position: absolute;
-  width: 260px; height: 40px;
-  background: var(--glow); filter: blur(40px);
-  opacity: 0; transition: opacity 0.8s; pointer-events: none;
-  margin-top: -20px;
-}
+.flip-glow { position: absolute; width: 260px; height: 40px; background: var(--glow); filter: blur(40px); opacity: 0; transition: opacity 0.8s; pointer-events: none; margin-top: -20px; }
 .flip-glow.running { opacity: 0.6; }
-
-/* Controls */
 .controls { display: flex; gap: 16px; align-items: center; margin-top: 16px; }
-.ctrl-btn {
-  width: 50px; height: 50px; border-radius: 50%; display: flex;
-  align-items: center; justify-content: center;
-  background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(245,240,235,0.5); transition: transform 0.15s;
-}
+.ctrl-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: rgba(245,240,235,0.5); transition: transform 0.15s; }
 .ctrl-btn:active { transform: scale(0.9); }
-.main-btn {
-  width: 76px; height: 76px; border-radius: 50%; display: flex;
-  align-items: center; justify-content: center; font-size: 22px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: #fff; box-shadow: 0 8px 32px var(--glow); transition: transform 0.15s;
-}
+.main-btn { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; box-shadow: 0 8px 32px var(--glow); transition: transform 0.15s; }
 .main-btn:active { transform: scale(0.92); }
-
-/* Session dots */
 .session-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: background 0.3s; }
 .dot.filled { background: var(--primary); }
 .today-count { font-size: 12px; color: var(--text-dimmer); margin-top: 10px; }
-
-/* Goal bar */
 .goal-bar { width: 100%; max-width: 300px; margin-top: 16px; padding: 0 40px; }
 .goal-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .goal-header span { font-size: 11px; font-weight: 500; }
 .goal-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
 .goal-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; background: linear-gradient(90deg, var(--primary), var(--accent)); }
-
-/* Session complete overlay */
-.session-complete-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.45); z-index: 50;
-  animation: fadeIn 0.3s ease;
-}
-.session-complete-card {
-  text-align: center; padding: 32px 40px;
-  background: rgba(22,22,22,0.97); border-radius: 28px;
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  min-width: 260px;
-}
+.session-complete-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); z-index: 50; animation: fadeIn 0.3s ease; }
+.session-complete-card { text-align: center; padding: 32px 40px; background: rgba(22,22,22,0.97); border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 260px; }
 .session-complete-card .sc-emoji { font-size: 52px; }
 .session-complete-card .sc-title { font-size: 20px; font-weight: 700; margin-top: 12px; }
 .session-complete-card .sc-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
 .session-complete-card .sc-overtime { font-size: 38px; font-weight: 200; color: var(--accent); font-variant-numeric: tabular-nums; margin-top: 16px; letter-spacing: 2px; }
 .session-complete-card .sc-overtime-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-dim); margin-top: 2px; }
 .session-complete-card .sc-hint { font-size: 11px; color: var(--text-dimmer); margin-top: 20px; }
-
-/* Stats */
 .stats-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .stats-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
 .stat-row { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -255,29 +90,15 @@ input[type="range"]::-webkit-slider-thumb {
 .tab-picker { display: flex; margin-bottom: 20px; background: var(--surface); border-radius: 10px; padding: 3px; }
 .tab-pick { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600; border-radius: 8px; color: var(--text-dim); transition: all 0.3s; }
 .tab-pick.active { background: rgba(255,255,255,0.08); color: var(--text); }
-
-/* Weekly chart */
 .week-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; gap: 6px; margin-bottom: 8px; }
 .week-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
-.week-bar {
-  width: 100%; max-width: 38px; border-radius: 8px; min-height: 4px;
-  background: rgba(255,255,255,0.04); position: relative; overflow: hidden;
-  display: flex; align-items: flex-end; justify-content: center;
-}
+.week-bar { width: 100%; max-width: 38px; border-radius: 8px; min-height: 4px; background: rgba(255,255,255,0.04); position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
 .week-bar.has-data { background: rgba(255,255,255,0.12); }
 .week-bar.today { background: linear-gradient(to top, var(--primary), var(--accent)); }
 .week-bar.today.has-data { box-shadow: 0 4px 16px var(--glow); }
-.week-bar-mins {
-  position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-  display: flex; align-items: center; justify-content: center;
-  writing-mode: vertical-lr; transform: rotate(180deg);
-  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.9);
-  pointer-events: none; padding: 4px 0;
-}
+.week-bar-mins { position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; writing-mode: vertical-lr; transform: rotate(180deg); font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.9); pointer-events: none; padding: 4px 0; }
 .week-day-label { font-size: 11px; color: var(--text-dimmer); }
 .week-day-label.today { color: rgba(255,255,255,0.8); font-weight: 600; }
-
-/* Heatmap */
 .month-title { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
 .heatmap-headers { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
 .heatmap-headers span { text-align: center; font-size: 10px; font-weight: 500; color: var(--text-dimmer); }
@@ -299,8 +120,6 @@ input[type="range"]::-webkit-slider-thumb {
 .summary-card .lbl { font-size: 11px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
 .summary-card .val { font-size: 24px; font-weight: 600; }
 .reset-btn { width: 100%; padding: 14px; border-radius: 14px; margin-top: 24px; font-size: 13px; font-weight: 500; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.08); background: transparent; }
-
-/* Settings */
 .settings-screen { padding: calc(env(safe-area-inset-top, 20px) + 8px) 24px 32px; }
 .settings-screen h2 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
 .settings-group { padding: 20px; margin-bottom: 16px; background: var(--surface); border-radius: 18px; border: 1px solid var(--surface2); }
@@ -314,13 +133,10 @@ input[type="range"]::-webkit-slider-thumb {
 .about { text-align: center; padding: 24px 0; }
 .about .name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3); }
 .about .tagline { font-size: 12px; color: rgba(255,255,255,0.2); margin-top: 4px; }
-
-/* Celebration */
 .celebration { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 100; animation: fadeIn 0.3s ease; }
 .celebration-card { text-align: center; padding: 32px; background: rgba(30,30,30,0.95); border-radius: 24px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .celebration-card .emoji { font-size: 44px; }
 .celebration-card .msg { font-size: 18px; font-weight: 600; margin-top: 8px; }
-
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 </style>
@@ -343,265 +159,157 @@ input[type="range"]::-webkit-slider-thumb {
     </button>
   </div>
 </div>
-
 <script>
 // ============================================================
 // DATA LAYER
 // ============================================================
 const STORE_KEY = 'pomodojo_data';
 const STATE_KEY = 'pomodojo_timer_state';
-
 const defaults = {
   settings: { focusDuration: 25, breakDuration: 5, longBreakDuration: 15, sessionsBeforeLongBreak: 4, dailyGoal: 4 },
   sessions: [], longestStreak: 0
 };
-
 function loadData() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) {
-      const d = JSON.parse(raw);
-      return { ...defaults, ...d, settings: { ...defaults.settings, ...(d.settings || {}) } };
-    }
+    if (raw) { const d = JSON.parse(raw); return { ...defaults, ...d, settings: { ...defaults.settings, ...(d.settings || {}) } }; }
   } catch(e) {}
   return { ...defaults };
 }
 function saveData(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {} }
-
 let data = loadData();
-
-function dateKey(d = new Date()) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
+function dateKey(d = new Date()) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function sessionsForDate(dk) { return data.sessions.filter(s => s.dateKey === dk); }
 function todayCount() { return sessionsForDate(dateKey()).length; }
-
 function calcStreak() {
-  let streak = 0;
-  let check = new Date(); check.setHours(0,0,0,0);
+  let streak = 0, check = new Date(); check.setHours(0,0,0,0);
   if (sessionsForDate(dateKey(check)).length === 0) check.setDate(check.getDate() - 1);
-  while (sessionsForDate(dateKey(check)).length > 0) {
-    streak++;
-    check.setDate(check.getDate() - 1);
-  }
+  while (sessionsForDate(dateKey(check)).length > 0) { streak++; check.setDate(check.getDate() - 1); }
   if (streak > data.longestStreak) { data.longestStreak = streak; saveData(data); }
   return streak;
 }
-
 function addSession(focusDur, overtimeSec) {
-  data.sessions.push({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-    date: new Date().toISOString(), dateKey: dateKey(),
-    focusDuration: focusDur, overtimeDuration: overtimeSec, completed: true
-  });
+  data.sessions.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,6), date: new Date().toISOString(), dateKey: dateKey(), focusDuration: focusDur, overtimeDuration: overtimeSec, completed: true });
   saveData(data);
 }
-
-function minutesForDate(dk) {
-  return Math.round(sessionsForDate(dk).reduce((a, s) => a + (s.focusDuration||0) + (s.overtimeDuration||0), 0) / 60);
-}
+function minutesForDate(dk) { return Math.round(sessionsForDate(dk).reduce((a, s) => a + (s.focusDuration||0) + (s.overtimeDuration||0), 0) / 60); }
 
 // ============================================================
 // TIMER STATE
 // ============================================================
-let mode = 'focus';
-let timeRemaining = data.settings.focusDuration * 60;
-let scheduledDuration = data.settings.focusDuration * 60;
-let isRunning = false;
-let sessionComplete = false;
-let overtimeSeconds = 0;
-let completedSessions = 0;
-let timerInterval = null;
-let timerStartWall = null;
-let timerStartRemain = null;
-let sessionEndWall = null;
+let mode = 'focus', timeRemaining, scheduledDuration, isRunning = false, sessionComplete = false;
+let overtimeSeconds = 0, completedSessions = 0, timerInterval = null;
+let timerStartWall = null, timerStartRemain = null, sessionEndWall = null;
+timeRemaining = scheduledDuration = data.settings.focusDuration * 60;
 
 function saveTimerState() {
-  try {
-    localStorage.setItem(STATE_KEY, JSON.stringify({
-      mode, timeRemaining, scheduledDuration, isRunning,
-      sessionComplete, overtimeSeconds, completedSessions,
-      timerStartWall, timerStartRemain, sessionEndWall,
-      savedAt: Date.now()
-    }));
-  } catch(e) {}
+  try { localStorage.setItem(STATE_KEY, JSON.stringify({ mode, timeRemaining, scheduledDuration, isRunning, sessionComplete, overtimeSeconds, completedSessions, timerStartWall, timerStartRemain, sessionEndWall, savedAt: Date.now() })); } catch(e) {}
 }
-
 function loadTimerState() {
   try {
-    const raw = localStorage.getItem(STATE_KEY);
-    if (!raw) return;
+    const raw = localStorage.getItem(STATE_KEY); if (!raw) return;
     const s = JSON.parse(raw);
-    mode = s.mode || 'focus';
-    scheduledDuration = s.scheduledDuration || data.settings.focusDuration * 60;
-    completedSessions = s.completedSessions || 0;
-    sessionComplete = s.sessionComplete || false;
-    timerStartWall = s.timerStartWall || null;
-    timerStartRemain = s.timerStartRemain || null;
-    sessionEndWall = s.sessionEndWall || null;
-
-    const now = Date.now();
-    const gap = Math.floor((now - (s.savedAt || now)) / 1000);
-
+    mode = s.mode || 'focus'; scheduledDuration = s.scheduledDuration || data.settings.focusDuration * 60;
+    completedSessions = s.completedSessions || 0; sessionComplete = s.sessionComplete || false;
+    timerStartWall = s.timerStartWall || null; timerStartRemain = s.timerStartRemain || null; sessionEndWall = s.sessionEndWall || null;
+    const now = Date.now(), gap = Math.floor((now - (s.savedAt || now)) / 1000);
     if (s.isRunning && gap > 0) {
       if (s.sessionComplete) {
-        overtimeSeconds = Math.min(600, (s.overtimeSeconds || 0) + gap);
-        timeRemaining = 0;
+        overtimeSeconds = Math.min(600, (s.overtimeSeconds || 0) + gap); timeRemaining = 0;
         if (overtimeSeconds >= 600) { sessionComplete = false; overtimeSeconds = 0; }
       } else {
-        const newRemain = Math.max(0, (s.timeRemaining || 0) - gap);
-        timeRemaining = newRemain;
-        overtimeSeconds = 0;
-        if (newRemain === 0) {
-          sessionComplete = true;
-          const crossedZeroAt = now - ((gap - (s.timeRemaining||0)) * 1000);
-          sessionEndWall = crossedZeroAt;
-          overtimeSeconds = Math.min(600, Math.max(0, Math.floor((now - crossedZeroAt) / 1000)));
-        }
+        const newRemain = Math.max(0, (s.timeRemaining || 0) - gap); timeRemaining = newRemain; overtimeSeconds = 0;
+        if (newRemain === 0) { sessionComplete = true; const crossedZeroAt = now - ((gap - (s.timeRemaining||0)) * 1000); sessionEndWall = crossedZeroAt; overtimeSeconds = Math.min(600, Math.max(0, Math.floor((now - crossedZeroAt) / 1000))); }
       }
-    } else {
-      timeRemaining = s.timeRemaining || scheduledDuration;
-      overtimeSeconds = s.overtimeSeconds || 0;
-    }
+    } else { timeRemaining = s.timeRemaining || scheduledDuration; overtimeSeconds = s.overtimeSeconds || 0; }
     isRunning = false;
-  } catch(e) {
-    setDuration('focus');
-  }
+  } catch(e) { setDuration('focus'); }
 }
-
 const modeThemes = {
-  focus:      { primary:'--focus', accent:'--focus-accent', bg:'--focus-bg', glow:'--focus-glow' },
+  focus: { primary:'--focus', accent:'--focus-accent', bg:'--focus-bg', glow:'--focus-glow' },
   shortBreak: { primary:'--break', accent:'--break-accent', bg:'--break-bg', glow:'--break-glow' },
-  longBreak:  { primary:'--long',  accent:'--long-accent',  bg:'--long-bg',  glow:'--long-glow' }
+  longBreak: { primary:'--long', accent:'--long-accent', bg:'--long-bg', glow:'--long-glow' }
 };
-
 function applyTheme() {
-  const t = modeThemes[mode];
-  const r = document.documentElement.style;
-  r.setProperty('--primary', `var(${t.primary})`);
-  r.setProperty('--accent',  `var(${t.accent})`);
-  r.setProperty('--mode-bg', `var(${t.bg})`);
-  r.setProperty('--glow',    `var(${t.glow})`);
+  const t = modeThemes[mode], r = document.documentElement.style;
+  r.setProperty('--primary', `var(${t.primary})`); r.setProperty('--accent', `var(${t.accent})`);
+  r.setProperty('--mode-bg', `var(${t.bg})`); r.setProperty('--glow', `var(${t.glow})`);
 }
-
 function setDuration(m) {
-  const s = data.settings;
-  const mins = m === 'focus' ? s.focusDuration : m === 'shortBreak' ? s.breakDuration : s.longBreakDuration;
-  scheduledDuration = mins * 60;
-  timeRemaining = scheduledDuration;
-  sessionComplete = false;
-  overtimeSeconds = 0;
+  const s = data.settings, mins = m === 'focus' ? s.focusDuration : m === 'shortBreak' ? s.breakDuration : s.longBreakDuration;
+  scheduledDuration = mins * 60; timeRemaining = scheduledDuration; sessionComplete = false; overtimeSeconds = 0;
   timerStartWall = timerStartRemain = sessionEndWall = null;
 }
-
-function formatTime(sec) {
-  const m = Math.floor(Math.abs(sec) / 60);
-  const s = Math.abs(sec) % 60;
-  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-}
+function formatTime(sec) { const m = Math.floor(Math.abs(sec) / 60), s = Math.abs(sec) % 60; return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
 
 // ============================================================
 // FLIP CLOCK ENGINE
 // ============================================================
-// Track displayed digits to only animate on change
 let displayedDigits = ['_','_','_','_'];
-
 function getDigits(totalSec) {
-  const sec = Math.abs(totalSec);
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return [
-    String(Math.floor(m / 10) % 10),
-    String(m % 10),
-    String(Math.floor(s / 10)),
-    String(s % 10)
-  ];
+  const sec = Math.abs(totalSec), m = Math.floor(sec / 60), s = sec % 60;
+  return [String(Math.floor(m / 10) % 10), String(m % 10), String(Math.floor(s / 10)), String(s % 10)];
 }
-
 function updateFlipClock(totalSec) {
-  const digits = getDigits(totalSec);
-  const ids = ['d0','d1','d2','d3'];
-  digits.forEach((digit, i) => {
-    if (digit !== displayedDigits[i]) {
-      flipDigit(ids[i], displayedDigits[i], digit);
-      displayedDigits[i] = digit;
-    }
-  });
+  const digits = getDigits(totalSec), ids = ['d0','d1','d2','d3'];
+  digits.forEach((digit, i) => { if (digit !== displayedDigits[i]) { flipDigit(ids[i], displayedDigits[i], digit); displayedDigits[i] = digit; } });
 }
-
 function flipDigit(id, oldVal, newVal) {
-  const el = document.getElementById(id);
-  if (!el) return;
-
+  const el = document.getElementById(id); if (!el) return;
   const topHalf = el.querySelector('.top-half .digit-num');
   const botHalf = el.querySelector('.bot-half .digit-num');
   const flapFront = el.querySelector('.flap-front .digit-num');
-  const flap = el.querySelector('.flap');
-  if (!flap) return;
+  const flap = el.querySelector('.flap'); if (!flap) return;
 
-  // Ensure static halves show old value
-  if (topHalf) topHalf.textContent = oldVal;
+  // FIXED STAGING: top=NEW (revealed as flap folds away), bot=OLD, flapFront=OLD (the face that folds)
+  if (topHalf) topHalf.textContent = newVal;
   if (botHalf) botHalf.textContent = oldVal;
-  // Flap front shows old value as it folds away
   if (flapFront) flapFront.textContent = oldVal;
 
-  // Trigger flap animation (flap becomes visible via CSS)
+  // Trigger animation
+  flap.style.visibility = '';
   flap.classList.remove('animating');
-  void flap.offsetWidth;
+  void flap.offsetWidth; // force reflow
   flap.classList.add('animating');
 
-  // After flap folds away: snap both static halves to new value, hide flap
-  setTimeout(() => {
-    if (topHalf) topHalf.textContent = newVal;
+  // FIXED CLEANUP: animationend is reliable; inline visibility:hidden beats CSS cascade
+  flap.addEventListener('animationend', function handler() {
+    flap.removeEventListener('animationend', handler);
     if (botHalf) botHalf.textContent = newVal;
-    flap.classList.remove('animating'); // hides flap again via CSS
-  }, 370);
+    flap.classList.remove('animating');
+    flap.style.visibility = 'hidden';
+  }, { once: true });
 }
-
 function buildFlipClock() {
   return `
     <div class="flip-clock-wrap">
       <div class="flip-clock">
-        <div class="flip-unit">
-          ${buildDigit('d0')}
-          ${buildDigit('d1')}
-        </div>
+        <div class="flip-unit">${buildDigit('d0')}${buildDigit('d1')}</div>
         <div class="flip-colon">:</div>
-        <div class="flip-unit">
-          ${buildDigit('d2')}
-          ${buildDigit('d3')}
-        </div>
+        <div class="flip-unit">${buildDigit('d2')}${buildDigit('d3')}</div>
       </div>
       <div class="flip-mode-label ${sessionComplete?'overtime':''}" id="flipLabel">
         ${sessionComplete ? 'Overtime' : (mode==='focus'?'Focus':mode==='shortBreak'?'Break':'Long Break')}
       </div>
-    </div>
-  `;
+    </div>`;
 }
-
 function buildDigit(id) {
-  return `
-    <div class="flip-digit" id="${id}">
-      <div class="top-half"><span class="digit-num">0</span></div>
-      <div class="bot-half"><span class="digit-num">0</span></div>
-      <div class="flap">
-        <div class="flap-front"><span class="digit-num">0</span></div>
-        <div class="flap-back"><span class="digit-num">0</span></div>
-      </div>
-      <div class="lower-reveal"><span class="digit-num">0</span></div>
+  return `<div class="flip-digit" id="${id}">
+    <div class="top-half"><span class="digit-num">0</span></div>
+    <div class="bot-half"><span class="digit-num">0</span></div>
+    <div class="flap">
+      <div class="flap-front"><span class="digit-num">0</span></div>
+      <div class="flap-back"><span class="digit-num">0</span></div>
     </div>
-  `;
+    <div class="lower-reveal"><span class="digit-num">0</span></div>
+  </div>`;
 }
-
 function initFlipDisplay(totalSec) {
-  const digits = getDigits(totalSec);
-  displayedDigits = ['_','_','_','_']; // force update all
-  const ids = ['d0','d1','d2','d3'];
-  digits.forEach((digit, i) => {
-    const el = document.getElementById(ids[i]);
-    if (!el) return;
-    el.querySelectorAll('.digit-num').forEach(n => n.textContent = digit);
-    displayedDigits[i] = digit;
+  const digits = getDigits(totalSec); displayedDigits = ['_','_','_','_'];
+  ['d0','d1','d2','d3'].forEach((id, i) => {
+    const el = document.getElementById(id); if (!el) return;
+    el.querySelectorAll('.digit-num').forEach(n => n.textContent = digits[i]);
+    displayedDigits[i] = digits[i];
   });
 }
 
@@ -610,127 +318,61 @@ function initFlipDisplay(totalSec) {
 // ============================================================
 function tick() {
   const now = Date.now();
-
   if (mode === 'focus') {
     if (!sessionComplete) {
-      if (timerStartWall !== null) {
-        const elapsed = Math.floor((now - timerStartWall) / 1000);
-        timeRemaining = Math.max(0, timerStartRemain - elapsed);
-      } else {
-        timeRemaining = Math.max(0, timeRemaining - 1);
-      }
-      if (timeRemaining === 0) {
-        sessionComplete = true;
-        sessionEndWall = now;
-        overtimeSeconds = 0;
-        sendNotification();
-        saveTimerState();
-        showSessionCompleteOverlay();
-      }
+      if (timerStartWall !== null) { const elapsed = Math.floor((now - timerStartWall) / 1000); timeRemaining = Math.max(0, timerStartRemain - elapsed); }
+      else { timeRemaining = Math.max(0, timeRemaining - 1); }
+      if (timeRemaining === 0) { sessionComplete = true; sessionEndWall = now; overtimeSeconds = 0; sendNotification(); saveTimerState(); showSessionCompleteOverlay(); }
     } else {
       overtimeSeconds = Math.floor((now - sessionEndWall) / 1000);
-      if (overtimeSeconds >= 600) {
-        endFocusSession();
-        return;
-      }
+      if (overtimeSeconds >= 600) { endFocusSession(); return; }
     }
   } else {
-    if (timerStartWall !== null) {
-      const elapsed = Math.floor((now - timerStartWall) / 1000);
-      timeRemaining = Math.max(0, timerStartRemain - elapsed);
-    } else {
-      timeRemaining = Math.max(0, timeRemaining - 1);
-    }
-    if (timeRemaining === 0) {
-      stopTimer();
-      switchMode('focus');
-      renderTimer();
-      return;
-    }
+    if (timerStartWall !== null) { const elapsed = Math.floor((now - timerStartWall) / 1000); timeRemaining = Math.max(0, timerStartRemain - elapsed); }
+    else { timeRemaining = Math.max(0, timeRemaining - 1); }
+    if (timeRemaining === 0) { stopTimer(); switchMode('focus'); renderTimer(); return; }
   }
-
   saveTimerState();
-  // Update flip clock display
   const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
   updateFlipClock(displaySec);
-  // Update label
   const label = document.getElementById('flipLabel');
-  if (label) {
-    label.textContent = sessionComplete ? 'Overtime' : (mode==='focus'?'Focus':mode==='shortBreak'?'Break':'Long Break');
-    label.className = 'flip-mode-label' + (sessionComplete ? ' overtime' : '');
-  }
-  // Update glow
+  if (label) { label.textContent = sessionComplete ? 'Overtime' : (mode==='focus'?'Focus':mode==='shortBreak'?'Break':'Long Break'); label.className = 'flip-mode-label' + (sessionComplete ? ' overtime' : ''); }
   const glow = document.getElementById('flipGlow');
   if (glow) glow.className = 'flip-glow' + (isRunning ? ' running' : '');
 }
-
 function startTimer() {
-  if (isRunning) return;
-  isRunning = true;
-  timerStartWall = Date.now();
-  timerStartRemain = sessionComplete ? 0 : timeRemaining;
+  if (isRunning) return; isRunning = true; timerStartWall = Date.now(); timerStartRemain = sessionComplete ? 0 : timeRemaining;
   if (sessionComplete && !sessionEndWall) sessionEndWall = Date.now();
-  timerInterval = setInterval(tick, 1000);
-  saveTimerState();
-  updateMainBtn();
-  const glow = document.getElementById('flipGlow');
-  if (glow) glow.className = 'flip-glow running';
+  timerInterval = setInterval(tick, 1000); saveTimerState(); updateMainBtn();
+  const glow = document.getElementById('flipGlow'); if (glow) glow.className = 'flip-glow running';
 }
-
-function stopTimer() {
-  isRunning = false;
-  clearInterval(timerInterval);
-  timerInterval = null;
-  timerStartWall = null;
-  timerStartRemain = null;
-}
-
+function stopTimer() { isRunning = false; clearInterval(timerInterval); timerInterval = null; timerStartWall = null; timerStartRemain = null; }
 function pauseTimer() { stopTimer(); saveTimerState(); updateMainBtn(); }
 function toggleTimer() { if (isRunning) pauseTimer(); else startTimer(); }
-
-function resetTimer() {
-  stopTimer(); setDuration(mode); saveTimerState(); renderTimer();
-}
-
-function switchMode(m) {
-  stopTimer(); mode = m; setDuration(m); applyTheme(); saveTimerState(); renderTimer();
-}
-
+function resetTimer() { stopTimer(); setDuration(mode); saveTimerState(); renderTimer(); }
+function switchMode(m) { stopTimer(); mode = m; setDuration(m); applyTheme(); saveTimerState(); renderTimer(); }
 function endFocusSession() {
   stopTimer();
   const goalBefore = todayCount() >= data.settings.dailyGoal;
-  addSession(scheduledDuration, overtimeSeconds);
-  completedSessions++;
-  sessionComplete = false; overtimeSeconds = 0;
-
-  if (completedSessions % data.settings.sessionsBeforeLongBreak === 0) switchMode('longBreak');
-  else switchMode('shortBreak');
+  addSession(scheduledDuration, overtimeSeconds); completedSessions++; sessionComplete = false; overtimeSeconds = 0;
+  if (completedSessions % data.settings.sessionsBeforeLongBreak === 0) switchMode('longBreak'); else switchMode('shortBreak');
   startTimer();
-
   if (!goalBefore && todayCount() >= data.settings.dailyGoal) showCelebration();
 }
-
 function skipToNext() {
   stopTimer();
   if (mode === 'focus') {
     if (sessionComplete || timeRemaining < scheduledDuration) endFocusSession();
-    else {
-      const isLong = (completedSessions + 1) % data.settings.sessionsBeforeLongBreak === 0;
-      switchMode(isLong ? 'longBreak' : 'shortBreak');
-    }
+    else { const isLong = (completedSessions + 1) % data.settings.sessionsBeforeLongBreak === 0; switchMode(isLong ? 'longBreak' : 'shortBreak'); }
   } else switchMode('focus');
 }
-
 function updateMainBtn() {
-  const btn = document.getElementById('mainBtn');
-  if (!btn) return;
+  const btn = document.getElementById('mainBtn'); if (!btn) return;
   if (mode === 'focus' && sessionComplete) {
     btn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>';
     btn.onclick = endFocusSession;
   } else {
-    btn.innerHTML = isRunning
-      ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
-      : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    btn.innerHTML = isRunning ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
     btn.onclick = toggleTimer;
   }
 }
@@ -743,26 +385,13 @@ document.addEventListener('visibilitychange', () => {
     if (isRunning) {
       const now = Date.now();
       if (!sessionComplete && timerStartWall !== null) {
-        const elapsed = Math.floor((now - timerStartWall) / 1000);
-        timeRemaining = Math.max(0, timerStartRemain - elapsed);
-        if (timeRemaining === 0) {
-          sessionComplete = true;
-          sessionEndWall = timerStartWall + (timerStartRemain * 1000);
-          overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000));
-          sendNotification();
-          showSessionCompleteOverlay();
-        }
-      } else if (sessionComplete && sessionEndWall) {
-        overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000));
-      }
+        const elapsed = Math.floor((now - timerStartWall) / 1000); timeRemaining = Math.max(0, timerStartRemain - elapsed);
+        if (timeRemaining === 0) { sessionComplete = true; sessionEndWall = timerStartWall + (timerStartRemain * 1000); overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000)); sendNotification(); showSessionCompleteOverlay(); }
+      } else if (sessionComplete && sessionEndWall) { overtimeSeconds = Math.min(600, Math.floor((now - sessionEndWall) / 1000)); }
       saveTimerState();
-      // Refresh display
-      const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
-      updateFlipClock(displaySec);
+      updateFlipClock(sessionComplete ? overtimeSeconds : timeRemaining);
     }
-  } else {
-    saveTimerState();
-  }
+  } else { saveTimerState(); }
 });
 window.addEventListener('pagehide', saveTimerState);
 window.addEventListener('beforeunload', saveTimerState);
@@ -770,127 +399,66 @@ window.addEventListener('beforeunload', saveTimerState);
 // ============================================================
 // NOTIFICATIONS
 // ============================================================
-function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
-}
+function requestNotificationPermission() { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); }
 function sendNotification() {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Pomodojo', { body: 'Focus session complete! Keep going or take a break.', icon: 'apple-touch-icon.png', tag: 'pomodojo-timer' });
-  }
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 800;
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-    osc.start(); osc.stop(ctx.currentTime + 0.8);
-  } catch(e) {}
+  if ('Notification' in window && Notification.permission === 'granted') new Notification('Pomodojo', { body: 'Focus session complete! Keep going or take a break.', icon: 'apple-touch-icon.png', tag: 'pomodojo-timer' });
+  try { const ctx = new (window.AudioContext || window.webkitAudioContext)(), osc = ctx.createOscillator(), gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.frequency.value = 800; gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8); osc.start(); osc.stop(ctx.currentTime + 0.8); } catch(e) {}
 }
 
 // ============================================================
 // SESSION COMPLETE OVERLAY
 // ============================================================
 let overlayEl = null, overlayInterval = null;
-
 function showSessionCompleteOverlay() {
-  dismissOverlay();
-  overlayEl = document.createElement('div');
-  overlayEl.className = 'session-complete-overlay';
-  overlayEl.innerHTML = `
-    <div class="session-complete-card">
-      <div class="sc-emoji">🎯</div>
-      <div class="sc-title">Session Complete!</div>
-      <div class="sc-subtitle">Overtime is tracking below.<br>Keep going — it all counts.</div>
-      <div class="sc-overtime" id="overlayOT">+00:00</div>
-      <div class="sc-overtime-lbl">Overtime</div>
-      <div class="sc-hint">Tap anywhere to dismiss</div>
-    </div>`;
-  overlayEl.addEventListener('click', dismissOverlay);
-  document.body.appendChild(overlayEl);
-  overlayInterval = setInterval(() => {
-    const el = document.getElementById('overlayOT');
-    if (el) el.textContent = '+' + formatTime(overtimeSeconds);
-    else { clearInterval(overlayInterval); overlayInterval = null; }
-  }, 1000);
+  dismissOverlay(); overlayEl = document.createElement('div'); overlayEl.className = 'session-complete-overlay';
+  overlayEl.innerHTML = `<div class="session-complete-card"><div class="sc-emoji">🎯</div><div class="sc-title">Session Complete!</div><div class="sc-subtitle">Overtime is tracking below.<br>Keep going — it all counts.</div><div class="sc-overtime" id="overlayOT">+00:00</div><div class="sc-overtime-lbl">Overtime</div><div class="sc-hint">Tap anywhere to dismiss</div></div>`;
+  overlayEl.addEventListener('click', dismissOverlay); document.body.appendChild(overlayEl);
+  overlayInterval = setInterval(() => { const el = document.getElementById('overlayOT'); if (el) el.textContent = '+' + formatTime(overtimeSeconds); else { clearInterval(overlayInterval); overlayInterval = null; } }, 1000);
   setTimeout(dismissOverlay, 5000);
 }
-
-function dismissOverlay() {
-  if (overlayEl) { overlayEl.remove(); overlayEl = null; }
-  if (overlayInterval) { clearInterval(overlayInterval); overlayInterval = null; }
-}
+function dismissOverlay() { if (overlayEl) { overlayEl.remove(); overlayEl = null; } if (overlayInterval) { clearInterval(overlayInterval); overlayInterval = null; } }
 
 // ============================================================
 // CELEBRATION
 // ============================================================
 function showCelebration() {
-  const el = document.createElement('div');
-  el.className = 'celebration';
+  const el = document.createElement('div'); el.className = 'celebration';
   el.innerHTML = '<div class="celebration-card"><div class="emoji">🎉</div><div class="msg">Daily Goal Complete!</div></div>';
-  el.onclick = () => el.remove();
-  document.body.appendChild(el);
-  setTimeout(() => { if (el.parentNode) el.remove(); }, 2500);
+  el.onclick = () => el.remove(); document.body.appendChild(el); setTimeout(() => { if (el.parentNode) el.remove(); }, 2500);
 }
 
 // ============================================================
 // RENDER
 // ============================================================
 let currentTab = 'timer';
-
 function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  if (tab === 'timer') renderTimer();
-  else if (tab === 'stats') renderStats();
-  else renderSettings();
+  currentTab = tab; document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if (tab === 'timer') renderTimer(); else if (tab === 'stats') renderStats(); else renderSettings();
 }
-
 function renderTimer() {
   if (currentTab !== 'timer') return;
-  const tc = document.getElementById('tabContent');
-  const streak = calcStreak();
-  const tc2 = todayCount();
-  const goalProg = Math.min(1, tc2 / Math.max(1, data.settings.dailyGoal));
-  const goalMet = tc2 >= data.settings.dailyGoal;
-  const dotCount = data.settings.sessionsBeforeLongBreak;
-  const filledDots = completedSessions % dotCount;
-
-  const mainIcon = (mode === 'focus' && sessionComplete)
-    ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>'
-    : isRunning
-      ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
-      : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const tc = document.getElementById('tabContent'), streak = calcStreak(), tc2 = todayCount();
+  const goalProg = Math.min(1, tc2 / Math.max(1, data.settings.dailyGoal)), goalMet = tc2 >= data.settings.dailyGoal;
+  const dotCount = data.settings.sessionsBeforeLongBreak, filledDots = completedSessions % dotCount;
+  const mainIcon = (mode === 'focus' && sessionComplete) ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>' : isRunning ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' : '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
   const mainAction = (mode === 'focus' && sessionComplete) ? 'endFocusSession()' : 'toggleTimer()';
-
   tc.innerHTML = `
     <div class="timer-screen">
       <div class="streak-banner">${streak > 0 ? `<span>🔥</span><span>${streak} day streak</span>` : ''}</div>
-
       <div class="mode-selector">
         <button class="mode-btn ${mode==='focus'?'active':''}" onclick="switchMode('focus')">Focus</button>
         <button class="mode-btn ${mode==='shortBreak'?'active':''}" onclick="switchMode('shortBreak')">Break</button>
         <button class="mode-btn ${mode==='longBreak'?'active':''}" onclick="switchMode('longBreak')">Long Break</button>
       </div>
-
       ${buildFlipClock()}
       <div class="flip-glow ${isRunning?'running':''}" id="flipGlow"></div>
-
       <div class="controls">
-        <button class="ctrl-btn" onclick="resetTimer()">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-        </button>
+        <button class="ctrl-btn" onclick="resetTimer()"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg></button>
         <button class="main-btn" id="mainBtn" onclick="${mainAction}">${mainIcon}</button>
-        <button class="ctrl-btn" onclick="skipToNext()">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm8.5-6l.5.35V6h2v12h-2V11.65z"/></svg>
-        </button>
+        <button class="ctrl-btn" onclick="skipToNext()"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm8.5-6l.5.35V6h2v12h-2V11.65z"/></svg></button>
       </div>
-
-      <div class="session-dots">
-        ${Array.from({length:dotCount},(_,i)=>`<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}
-      </div>
+      <div class="session-dots">${Array.from({length:dotCount},(_,i)=>`<div class="dot ${i<filledDots?'filled':''}"></div>`).join('')}</div>
       <div class="today-count">${tc2} session${tc2===1?'':'s'} today</div>
-
       <div class="goal-bar">
         <div class="goal-header">
           <span style="color:var(--text-dim)">Daily Goal</span>
@@ -899,20 +467,14 @@ function renderTimer() {
         <div class="goal-track"><div class="goal-fill" style="width:${goalProg*100}%"></div></div>
       </div>
     </div>`;
-
-  // Init flip display with current time
-  const displaySec = sessionComplete ? overtimeSeconds : timeRemaining;
-  initFlipDisplay(displaySec);
+  initFlipDisplay(sessionComplete ? overtimeSeconds : timeRemaining);
 }
 
 // ---- STATS ----
-let statsTab = 'weekly';
-let selectedHeatmapDay = null;
-
+let statsTab = 'weekly', selectedHeatmapDay = null;
 function renderStats() {
   if (currentTab !== 'stats') return;
-  const tc = document.getElementById('tabContent');
-  const streak = calcStreak();
+  const tc = document.getElementById('tabContent'), streak = calcStreak();
   tc.innerHTML = `
     <div class="stats-screen">
       <h2>Progress</h2>
@@ -929,154 +491,62 @@ function renderStats() {
       ${renderSummaryCards()}
       <button class="reset-btn" onclick="if(confirm('Reset all history?')){data.sessions=[];data.longestStreak=0;saveData(data);renderStats();}">Reset All History</button>
     </div>`;
-  if (statsTab === 'weekly') renderWeekly();
-  else renderMonthly();
+  if (statsTab === 'weekly') renderWeekly(); else renderMonthly();
 }
-
 function renderWeekly() {
-  const container = document.getElementById('statsContent');
-  const today = new Date(); today.setHours(0,0,0,0);
+  const container = document.getElementById('statsContent'), today = new Date(); today.setHours(0,0,0,0);
   const days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
-    const dk = dateKey(d);
-    const mins = minutesForDate(dk);
-    days.push({ mins, dayName: d.toLocaleDateString('en-US',{weekday:'short'}), isToday: i===0, hasData: mins>0 });
-  }
+  for (let i = 6; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); const dk = dateKey(d), mins = minutesForDate(dk); days.push({ mins, dayName: d.toLocaleDateString('en-US',{weekday:'short'}), isToday: i===0, hasData: mins>0 }); }
   const maxMins = Math.max(1, ...days.map(d => d.mins));
-  container.innerHTML = `
-    <div class="week-chart">
-      ${days.map(d => {
-        const h = Math.max(4, (d.mins / maxMins) * 130);
-        const label = d.mins >= 60 ? Math.floor(d.mins/60)+'h'+(d.mins%60>0?(d.mins%60)+'m':'') : (d.mins>0?d.mins+'m':'');
-        const showLabel = d.mins > 0 && h >= 26;
-        return `<div class="week-bar-col">
-          <div class="week-bar ${d.hasData?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px">
-            ${showLabel ? `<div class="week-bar-mins">${label}</div>` : ''}
-          </div>
-          <div class="week-day-label ${d.isToday?'today':''}">${d.dayName}</div>
-        </div>`;
-      }).join('')}
-    </div>`;
+  container.innerHTML = `<div class="week-chart">${days.map(d => { const h = Math.max(4, (d.mins / maxMins) * 130); const label = d.mins >= 60 ? Math.floor(d.mins/60)+'h'+(d.mins%60>0?(d.mins%60)+'m':'') : (d.mins>0?d.mins+'m':''); const showLabel = d.mins > 0 && h >= 26; return `<div class="week-bar-col"><div class="week-bar ${d.hasData?'has-data':''} ${d.isToday?'today':''}" style="height:${h}px">${showLabel ? `<div class="week-bar-mins">${label}</div>` : ''}</div><div class="week-day-label ${d.isToday?'today':''}">${d.dayName}</div></div>`; }).join('')}</div>`;
 }
-
 function renderMonthly() {
-  const container = document.getElementById('statsContent');
-  const now = new Date();
-  const year = now.getFullYear(), month = now.getMonth();
-  const monthName = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  const firstDay = new Date(year,month,1).getDay();
-  const daysInMonth = new Date(year,month+1,0).getDate();
-  const todayDk = dateKey();
+  const container = document.getElementById('statsContent'), now = new Date(), year = now.getFullYear(), month = now.getMonth();
+  const monthName = now.toLocaleDateString('en-US',{month:'long',year:'numeric'}), firstDay = new Date(year,month,1).getDay(), daysInMonth = new Date(year,month+1,0).getDate(), todayDk = dateKey();
   let cells = '';
   for (let i = 0; i < firstDay; i++) cells += '<div class="heatmap-cell" style="background:transparent"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const dk = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const count = sessionsForDate(dk).length;
+    const dk = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`, count = sessionsForDate(dk).length;
     const isToday = dk===todayDk, isFuture = dk>todayDk;
-    let lvl = '';
-    if (!isFuture && count > 0) lvl = count>=8?'lvl5':count>=5?'lvl4':count>=3?'lvl3':count>=2?'lvl2':'lvl1';
+    let lvl = ''; if (!isFuture && count > 0) lvl = count>=8?'lvl5':count>=5?'lvl4':count>=3?'lvl3':count>=2?'lvl2':'lvl1';
     const cls = [isToday?'today':'',isFuture?'future':'',lvl].filter(Boolean).join(' ');
     const click = count>0 ? `onclick="selectedHeatmapDay=selectedHeatmapDay==='${dk}'?null:'${dk}';renderStats()"` : '';
     cells += `<div class="heatmap-cell ${cls}" ${click}>${d}</div>`;
   }
   let selectedInfo = '';
-  if (selectedHeatmapDay) {
-    const sc = sessionsForDate(selectedHeatmapDay);
-    if (sc.length > 0) {
-      const dd = new Date(selectedHeatmapDay + 'T12:00:00');
-      const label = dd.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-      const mins = minutesForDate(selectedHeatmapDay);
-      selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'} · ${mins}m</span></div>`;
-    }
-  }
-  container.innerHTML = `
-    <div class="month-title">${monthName}</div>
-    <div class="heatmap-headers">${['S','M','T','W','T','F','S'].map(h=>`<span>${h}</span>`).join('')}</div>
-    <div class="heatmap-grid">${cells}</div>
-    ${selectedInfo}
-    <div class="heatmap-legend">
-      <span>Less</span>
-      <div class="legend-box" style="background:var(--surface)"></div>
-      <div class="legend-box" style="background:rgba(232,85,58,0.25)"></div>
-      <div class="legend-box" style="background:rgba(232,85,58,0.4)"></div>
-      <div class="legend-box" style="background:rgba(232,85,58,0.6)"></div>
-      <div class="legend-box" style="background:rgba(232,85,58,0.8)"></div>
-      <div class="legend-box" style="background:rgba(232,85,58,1)"></div>
-      <span>More</span>
-    </div>`;
+  if (selectedHeatmapDay) { const sc = sessionsForDate(selectedHeatmapDay); if (sc.length > 0) { const dd = new Date(selectedHeatmapDay + 'T12:00:00'), label = dd.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}), mins = minutesForDate(selectedHeatmapDay); selectedInfo = `<div class="heatmap-selected"><span style="color:var(--text-dim)">${label}</span><span style="font-weight:600">${sc.length} session${sc.length===1?'':'s'} · ${mins}m</span></div>`; } }
+  container.innerHTML = `<div class="month-title">${monthName}</div><div class="heatmap-headers">${['S','M','T','W','T','F','S'].map(h=>`<span>${h}</span>`).join('')}</div><div class="heatmap-grid">${cells}</div>${selectedInfo}<div class="heatmap-legend"><span>Less</span><div class="legend-box" style="background:var(--surface)"></div><div class="legend-box" style="background:rgba(232,85,58,0.25)"></div><div class="legend-box" style="background:rgba(232,85,58,0.4)"></div><div class="legend-box" style="background:rgba(232,85,58,0.6)"></div><div class="legend-box" style="background:rgba(232,85,58,0.8)"></div><div class="legend-box" style="background:rgba(232,85,58,1)"></div><span>More</span></div>`;
 }
-
 function renderSummaryCards() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  let weekTotal = 0, weekMins = 0, bestDay = 0;
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today); d.setDate(d.getDate()-i);
-    const dk = dateKey(d);
-    const s = sessionsForDate(dk);
-    weekTotal += s.length;
-    if (s.length > bestDay) bestDay = s.length;
-    weekMins += minutesForDate(dk);
-  }
-  const wh = Math.floor(weekMins/60), wm = weekMins%60;
-  const weekFmt = wh > 0 ? `${wh}h ${wm}m` : `${wm}m`;
-  return `
-    <div class="summary-grid">
-      <div class="summary-card"><div class="lbl">Today</div><div class="val">${todayCount()}</div></div>
-      <div class="summary-card"><div class="lbl">This Week</div><div class="val">${weekTotal}</div></div>
-      <div class="summary-card"><div class="lbl">Best Day</div><div class="val">${bestDay}</div></div>
-      <div class="summary-card"><div class="lbl">Focus Time</div><div class="val">${weekFmt}</div></div>
-    </div>`;
+  const today = new Date(); today.setHours(0,0,0,0); let weekTotal = 0, weekMins = 0, bestDay = 0;
+  for (let i = 0; i < 7; i++) { const d = new Date(today); d.setDate(d.getDate()-i); const dk = dateKey(d), s = sessionsForDate(dk); weekTotal += s.length; if (s.length > bestDay) bestDay = s.length; weekMins += minutesForDate(dk); }
+  const wh = Math.floor(weekMins/60), wm = weekMins%60, weekFmt = wh > 0 ? `${wh}h ${wm}m` : `${wm}m`;
+  return `<div class="summary-grid"><div class="summary-card"><div class="lbl">Today</div><div class="val">${todayCount()}</div></div><div class="summary-card"><div class="lbl">This Week</div><div class="val">${weekTotal}</div></div><div class="summary-card"><div class="lbl">Best Day</div><div class="val">${bestDay}</div></div><div class="summary-card"><div class="lbl">Focus Time</div><div class="val">${weekFmt}</div></div></div>`;
 }
 
 // ---- SETTINGS ----
 let tempSettings = { ...data.settings };
 function renderSettings() {
-  if (currentTab !== 'settings') return;
-  tempSettings = { ...data.settings };
+  if (currentTab !== 'settings') return; tempSettings = { ...data.settings };
   document.getElementById('tabContent').innerHTML = `
     <div class="settings-screen">
       <h2>Settings</h2>
-      <div class="settings-group">
-        <h3>Timer</h3>
-        ${settingSlider('focusDuration','Focus Duration','min',1,60,'#E8553A')}
-        ${settingSlider('breakDuration','Break Duration','min',1,30,'#3AAF85')}
-        ${settingSlider('longBreakDuration','Long Break Duration','min',1,30,'#5B7FE8')}
-        ${settingSlider('sessionsBeforeLongBreak','Sessions Before Long Break','',2,8,'rgba(255,255,255,0.6)')}
-      </div>
-      <div class="settings-group">
-        <h3>Goals</h3>
-        ${settingSlider('dailyGoal','Daily Session Goal','sessions',1,12,'#FFB932')}
-      </div>
+      <div class="settings-group"><h3>Timer</h3>${settingSlider('focusDuration','Focus Duration','min',1,60,'#E8553A')}${settingSlider('breakDuration','Break Duration','min',1,30,'#3AAF85')}${settingSlider('longBreakDuration','Long Break Duration','min',1,30,'#5B7FE8')}${settingSlider('sessionsBeforeLongBreak','Sessions Before Long Break','',2,8,'rgba(255,255,255,0.6)')}</div>
+      <div class="settings-group"><h3>Goals</h3>${settingSlider('dailyGoal','Daily Session Goal','sessions',1,12,'#FFB932')}</div>
       <button class="save-btn" onclick="saveSettings()">Save Settings</button>
       <div class="about"><div class="name">Pomodojo</div><div class="tagline">Focus. Rest. Repeat.</div></div>
     </div>`;
 }
 function settingSlider(key, label, unit, min, max, color) {
   const val = tempSettings[key];
-  return `<div class="setting-item">
-    <div class="setting-header">
-      <span class="lbl">${label}</span>
-      <span class="val" id="val_${key}" style="color:${color}">${val}${unit?' '+unit:''}</span>
-    </div>
-    <input type="range" min="${min}" max="${max}" value="${val}" style="--primary:${color}"
-      oninput="tempSettings['${key}']=parseInt(this.value);document.getElementById('val_${key}').textContent=this.value+'${unit?' '+unit:''}'">
-  </div>`;
+  return `<div class="setting-item"><div class="setting-header"><span class="lbl">${label}</span><span class="val" id="val_${key}" style="color:${color}">${val}${unit?' '+unit:''}</span></div><input type="range" min="${min}" max="${max}" value="${val}" style="--primary:${color}" oninput="tempSettings['${key}']=parseInt(this.value);document.getElementById('val_${key}').textContent=this.value+'${unit?' '+unit:''}'"></div>`;
 }
-function saveSettings() {
-  data.settings = { ...tempSettings };
-  saveData(data);
-  mode = 'focus'; setDuration('focus'); stopTimer(); applyTheme();
-  switchTab('timer');
-}
+function saveSettings() { data.settings = { ...tempSettings }; saveData(data); mode = 'focus'; setDuration('focus'); stopTimer(); applyTheme(); switchTab('timer'); }
 
 // ============================================================
 // INIT
 // ============================================================
-loadTimerState();
-applyTheme();
-renderTimer();
-requestNotificationPermission();
+loadTimerState(); applyTheme(); renderTimer(); requestNotificationPermission();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
